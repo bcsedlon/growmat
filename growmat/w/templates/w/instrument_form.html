@@ -1,0 +1,22 @@
+
+
+<a href="{% url 'w:list'  %}">Back</a>
+
+
+<h2>{{form.name.value}}</h2>
+<hr>
+<form action="" method="post">{% csrf_token %}
+
+
+
+
+
+
+
+{{form.name}}
+
+    <table>
+    {{ form }}
+    <tr><td></td><td><input type="submit" value="OK" /></td></tr>
+    </table>
+</form>

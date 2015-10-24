@@ -1,0 +1,14 @@
+
+
+{% block content %}
+    <h2>Instruments</h2>
+    <a href="{% url 'w:c' %}">Create</a>
+    <hr>
+    <table border=1>
+    
+        {% for instrument in object_list %}
+            <tr><td>{{ instrument.id }}</td><td>{{ instrument.name }}</td><td>{{ instrument.type }}</td><td>{{ instrument.get_type_display }}</td><td><a href="{% url 'w:u' instrument.id %}">Update</a></td><td><a href="{% url 'w:d' instrument.id %}">Delete</a></td><tr>
+        {% endfor %}
+    
+    </table>
+{% endblock %}

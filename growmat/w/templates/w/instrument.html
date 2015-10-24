@@ -1,0 +1,48 @@
+<html>
+<h1>{{ instrument.user_name }}</h1>
+<ul>
+{% for name, value in instrument.get_fields %}
+  {% if value %}
+    {{ name }} => {{ value }}
+  {% endif %}
+{% endfor %}
+</ul>
+
+<form action="{% url 'w:index' %}" method="get">
+{% csrf_token %}
+<input type="submit" name="back" value="BACK" /></td></tr>
+</form>
+
+<h1>{{ instrument.user_name }}</h1>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<table border=1>
+
+
+<form action="{% url 'w:instrument' instrument.id %}" method="post">
+
+{% csrf_token %}
+{{ form.as_p }}
+<tr><td></td><td><input type="submit" name="save" value="SAVE" /></td></tr>
+<tr><td></td><td><input type="submit" name="copy" value="COPY" /></td></tr>
+<tr><td></td><td><input type="submit" name="delete" value="DELETE" /></td></tr>
+</form>
+</table>
+
+
+{% comment %}
+<table border=1>
+<form>
+{% csrf_token %}
+{% for name, value in instrument.get_fields %}
+  {% if value %}
+    <tr><td>{{name}}</td><td><input type="text" name="{{ name }}" value="{{ value }}"></td></tr>
+  {% endif %}
+{% endfor %}
+</form>
+</table>
+{% endcomment %}
+
+
+</html>

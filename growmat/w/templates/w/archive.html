@@ -1,0 +1,77 @@
+<html>
+<head>
+
+</head>
+<body>
+
+<h3><a href="{% url 'w:index' %}">Instruments</a> <a href="{% url 'w:rule' %}">Rules</a> <a href="{% url 'w:archive' %}">Archives</a></h3>
+
+{% if form %}
+	{% if form.errors %}<p><strong>{{ form.errors }}</strong></p>{% endif %}
+{% endif %}
+
+
+<table border=1>
+		<tr><th>ID</th><th>INSTRUMENT</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th></tr>
+		
+		
+        
+        {% for archive in archives %}
+
+        	
+            <tr>
+            	<td>{{ archive.id }}</td>
+            	<td>{{ archive.instrument.name }}</td>
+            	<td>{{ archive.value }}</td>
+            	<td>{{ archive.status }}</td>
+            	<td>{{ archive.datetime|date:"D d M Y" }} {{ archive.datetime|time:"H:i:s" }} </td>
+            <tr>
+       {% endfor %}
+    
+</table>
+</body>
+</html>
+
+
+
+
+
+{% comment %}
+
+
+<form action="{% url 'w:instrumentAdd'  %}" method="post">
+{% csrf_token %}
+<input type="submit" name="addInstrument" value="ADD INSTRUMENT"> 
+</form>
+
+{% if instruments %}
+    <table = border=1>
+    {% for instrument in instruments %}
+        <tr><td><a href="{% url 'w:instrument' instrument.id %}">{{instrument.id}}</a></td><td>{{ instrument.address }} {{ instrument.system_name }} {{ instrument.user_name }}</td></tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No instrumets are available.</p>
+{% endif %}
+
+
+{% if instruments %}
+    <table = border=1>
+    {% for instrument in instruments %}
+        <tr>
+		<td><a href="{% url 'w:instrument' instrument.id %}">{{instrument.id}}</a>
+	
+		{% for field, value in instrument.fields.iteritems %}
+            <td>{{field}}</td>
+            <td>{{value }}</td>
+		{% endfor %}
+        </tr>		
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No instrumets are available.</p>
+{% endif %}
+
+{{list}}
+
+{% endcomment %}

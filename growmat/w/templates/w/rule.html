@@ -1,0 +1,136 @@
+<html>
+<head>
+{% comment %}
+{% if form or form0 %}
+{% else %}
+<meta http-equiv="refresh" content="5">
+{% endif %}
+</head>
+<body>
+{% endcomment %}
+
+<h3><a href="{% url 'w:index' %}">Instruments</a> <a href="{% url 'w:rule' %}">Rules</a> <a href="{% url 'w:archive' %}">Archives</a></h3>
+
+{% if form %}
+	{% if form.errors %}<p><strong>{{ form.errors }}</strong></p>{% endif %}
+{% endif %}
+
+
+<a href="{% url 'w:rule' 0 %}">Add Rule</a>
+<table border=1>
+		<tr><th>ID</th><th>PERIOD</th><th>INPUT</th><th>INPUT ATTRIBUTE</th><th>OPERATION</th><th>INPUT PARAMETER</th><th>OUTPUT</th><th>OUTPUT ATTRIBUTE</th><th>ACTION</th><th>OUTPUT PARAMETER</th><th>DESCRIPTION</th><th></th><th></th><th>RESULT</th><th>DATETIME</th></tr>
+		{% if form.pk = 0 %}
+		
+		
+		<tr>
+		<form action="" method="post">{% csrf_token %}
+        	<td>NEW</td>
+        	<td>{{ form.period }}</td>
+            <td>{{ form.input }}</td>
+            <td>{{ form.input_attribute }}</td>
+        	<td>{{ form.operation }}</td>
+            <td>{{ form.input_parameter }}</td>
+            <td>{{ form.output }}</td>
+            <td>{{ form.output_attribute }}</td>
+            <td>{{ form.action }}</td>
+            <td>{{ form.output_parameter }}</td>
+            <td>{{ form.description }}</td>
+            <td><input type="submit" name="create" value="Create" /></td>
+            <td></td>
+            <td></td>
+            <td></td>
+
+        </form>
+        </tr>
+        {% endif %}        
+        {% for rule in rules %}
+
+        	{% if rule.pk = form.pk %}
+        	
+        	<tr>
+        	<form action="" method="post">{% csrf_token %}
+            	<td>{{ form.pk }}</td>
+            	<td>{{ form.period }}</td>
+            	<td>{{ form.input }}</td>
+            	<td>{{ form.input_attribute }}</td>
+        		<td>{{ form.operation }}</td>
+            	<td>{{ form.input_parameter }}</td>
+            	<td>{{ form.output }}</td>
+            	<td>{{ form.output_attribute }}</td>
+            	<td>{{ form.action }}</td>
+            	<td>{{ form.output_parameter }}</td>
+            	<td>{{ form.description }}</td>
+            	<td><input type="submit" name="save" value="Save" /></td>
+            	<td></td>
+            	<td></td>
+            	<td></td>
+            </form>
+            <tr>
+        	{% else %}
+            <tr>
+             	<td>{{ rule.id }}</td>
+             	<td>{{ rule.period.name }}</td>
+            	<td>{{ rule.input.name }}</td>
+        		<td>{{ rule.get_input_attribute_display }}</td>
+        		<td>{{ rule.get_operation_display }}</td>
+            	<td>{{ rule.input_parameter }}</td>
+            	<td>{{ rule.output.name }}</td>
+            	<td>{{ rule.get_output_attribute_display }}</td>
+            	<td>{{ rule.get_action_display }}</td>
+            	<td>{{ rule.output_parameter }}</td>
+            	<td>{{ rule.description }}</td>
+            	<td><a href="{% url 'w:rule' rule.id %}">Update</a></td>
+            	<td><a href="{% url 'w:rule_delete' rule.id %}">Delete</a></td>
+            	<td>{{ rule.result }}</td>
+            	<td>{{ rule.datetime|date:"D d M Y" }} {{ rule.datetime|time:"H:i:s" }} </td>
+            <tr>
+            {% endif %}
+        {% endfor %}
+    
+</table>
+</body>
+</html>
+
+
+
+
+
+{% comment %}
+
+
+<form action="{% url 'w:instrumentAdd'  %}" method="post">
+{% csrf_token %}
+<input type="submit" name="addInstrument" value="ADD INSTRUMENT"> 
+</form>
+
+{% if instruments %}
+    <table = border=1>
+    {% for instrument in instruments %}
+        <tr><td><a href="{% url 'w:instrument' instrument.id %}">{{instrument.id}}</a></td><td>{{ instrument.address }} {{ instrument.system_name }} {{ instrument.user_name }}</td></tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No instrumets are available.</p>
+{% endif %}
+
+
+{% if instruments %}
+    <table = border=1>
+    {% for instrument in instruments %}
+        <tr>
+		<td><a href="{% url 'w:instrument' instrument.id %}">{{instrument.id}}</a>
+	
+		{% for field, value in instrument.fields.iteritems %}
+            <td>{{field}}</td>
+            <td>{{value }}</td>
+		{% endfor %}
+        </tr>		
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No instrumets are available.</p>
+{% endif %}
+
+{{list}}
+
+{% endcomment %}
