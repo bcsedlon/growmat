@@ -1,3 +1,5 @@
+{% load tz %}
+
 <html>
 <head>
 {% if form or form0 %}
@@ -8,6 +10,9 @@
 <body>
 
 <h3><a href="{% url 'w:index' %}">Instruments</a> <a href="{% url 'w:rule' %}">Rules</a> <a href="{% url 'w:archive' %}">Archives</a></h3>
+
+ <h3><a href="{% url 'w:webcam' %}">Webcam</a></h3>
+
 
 {% if form %}
 	{% if form.errors %}<p><strong>{{ form.errors }}</strong></p>{% endif %}
@@ -26,6 +31,7 @@
             <td>{{ form0.type }}</td>
             <td>{{ form0.index }}</td>
             <td><input type="submit" name="create" value="Create" /></td>
+            <td></td>
             <td>{{ form0.value }}</td>
             <td>{{ form0.status }}</td>
             <td></td>

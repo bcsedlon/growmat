@@ -47,6 +47,8 @@ class RuleDelete(DeleteView):
 
 # Create your views here.
 def archive(request, pk=None):
+    return render(request, 'w/archive.html')
+    
     if pk:
         instrument0 = Instrument.objects.get(pk=pk)
         archives = Archive.objects.filter(instrument=instrument0).order_by('datetime')
@@ -58,8 +60,11 @@ def archive(request, pk=None):
     })
 
     return render(request, 'w/archive.html', context)
-    
+   
 
+def webcam(request, pk=None):
+	return render(request, 'w/webcam.html')
+	
 def index(request, pk=None):
     #print pk
     #if request.method == 'POST':

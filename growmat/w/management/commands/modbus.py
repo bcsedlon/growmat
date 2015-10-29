@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from w.models import Instrument, Rule
+from w.models import Instrument, Rule, Archive
 import time
 
 import datetime
@@ -7,6 +7,13 @@ import time
 from time import gmtime, strftime
 import sys
 
+#print Archive.objects.raw('DELETE FROM w_archive WHERE 1')
+
+#from django.db import connection
+#cursor = connection.cursor()
+#cursor.execute('DELETE FROM w_archive WHERE 1')
+#connection.commit()
+#print '...'
 
 import smbus
 import time
@@ -45,6 +52,25 @@ import socket
 #s = s.getsockname()[0]
 #print s
 #call('pwd')
+#curl -s http://whatismijnip.nl |cut -d " " -f 5
+
+import os
+import urllib
+import urllib2
+
+def get_external_ip():
+    site = urllib.urlopen("http://checkip.dyndns.org/").read()
+    grab = re.findall('([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', site)
+    address = grab[0]
+    return address
+
+#try:
+#    fqn = os.uname()[1]
+#    ext_ip = urllib2.urlopen('http://whatismyip.org').read()
+#    #print ("Asset: %s " % fqn, "Checking in from IP#: %s " % ext_ip)
+#except Error:
+#    ext_ip = '0.0.0.0'
+    
 call(['python', '/home/pi/xsend.py' ,'growmat@jabbim.cz', 'GROWMAT'])
 
 #import subprocess
@@ -154,55 +180,172 @@ class Command(BaseCommand):
             
             rules = Rule.objects.order_by('pk')
             for rule in rules:
-                input_value = Instrument.objects.get(pk=rule.input.pk).value
-                operation = rule.operation
-                input_parameter = rule.input_parameter
+                
+                if rule.input_attribute == 'VALUE':                            
+                    a = rule.input.value
+                else:
+                    a = float(rule.input.status)
+                
+                b = rule.input_parameter
+                op = rule.operation
+                
+                exp = 'True if {} {} {} else False'.format(a, op, b)
+                r = eval(exp)
+                #print rule.description
+                #print exp
+                #print r
+                #print
+                
+                rule.result = r
+                #rule.save()
+                    
+                #    input_value = Instrument.objects.get(pk=rule.input.pk).value
+                #    
+                #    True if fruit == 'Apple' else False
+                #    
+                #    if operation == '==':
+                #        if rule.input.value == rule.input_parameter:
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '!=':
+                #    if input_value != input_parameter:
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '>':
+                #    if input_value > input_parameter:
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '<':
+                #    if input_value < input_parameter:
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '&':
+                #    if int(input_value) & int(input_parameter):
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '|':
+                #    if int(input_value) | int(input_parameter):
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                    
+                    
+                    
+                    
+                #else:
+                #    input_value = float(Instrument.objects.get(pk=rule.input.pk).status)
+                #
+                #operation = rule.operation
+                #input_parameter = rule.input_parameter
                 #calculation = 'if ' + input_value + ' ' + operation + ' ' + parametr + ' : True' 
                 #calculation = "if {0} {1} {2}: True".format(input_value, operation, parameter)
                 #print calculation
                 
-                if operation == '==':
-                    if input_value == input_parameter:
-                        rule.result = True
-                    else:
-                        rule.result = False
-                if operation == '!=':
-                    if input_value != input_parameter:
-                        rule.result = True
-                    else:
-                        rule.result = False
-                if operation == '>':
-                    if input_value > input_parameter:
-                        rule.result = True
-                    else:
-                        rule.result = False
-                if operation == '<':
-                    if input_value < input_parameter:
-                        rule.result = True
-                    else:
-                        rule.result = False
-                if operation == '&':
-                    if int(input_value) & int(input_parameter):
-                        rule.result = True
-                    else:
-                        rule.result = False
-                if operation == '|':
-                    if int(input_value) | int(input_parameter):
-                        rule.result = True
-                    else:
-                        rule.result = False
-                
+                #if operation == '==':
+                #    if input_value == input_parameter:
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '!=':
+                #    if input_value != input_parameter:
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '>':
+                #    if input_value > input_parameter:
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '<':
+                #    if input_value < input_parameter:
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '&':
+                #    if int(input_value) & int(input_parameter):
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+                #if operation == '|':
+                #    if int(input_value) | int(input_parameter):
+                #        rule.result = True
+                #    else:
+                #        rule.result = False
+
                                 
 
                 #print rule.description
+                #print rule.result
+                
                 if rule.result:
-                    if rule.action == '=':
+                    
+                    if rule.output_attribute ==  'VALUE':                          
+                        a = rule.output.value
+                    else:
+                        a = rule.output.status
+                
+                    b = rule.output_parameter
+                    op = rule.action
+                    if op == '=':
+                        r = b
+                    else:
+                        exp = '{} {} {}'.format(a, op, b)
+                        r = eval(exp)
+                        #print rule.description
+                        #print exp
+                        #print r
+                        #print '---'
+           
+                        #print rule.output_attribute
+                    if rule.output_attribute == 'VALUE':           
+                        rule.output.value = r
+                    #    print 'value'
+                    else:
+                        rule.output.status = int(r)
+                        #    print 'status'
+                
+                        #print rule.description
+                        #print rule.output.value
+                        #print rule.output.status
+                        #print
+                 
+                    rule.output.datetime = timezone.now()
+                    rule.output.save()
+                
+                rule.save()
+                    
+                    
+                 #   if rule.action == '=':
                         #print str(rule.output_parameter)
                         
-                        rule.output.value = rule.output_parameter
+                 #       rule.output.value = rule.output_parameter
                         #else:
                         #    rule.output.value = 0
-                        rule.output.save()
+                 #       rule.output.save()
+                        
+                
+                 #   if rule.action == '+':                        
+                 #       rule.output.value = rule.output.value + rule.output_parameter
+                 #       rule.output.save()
+                        
+                
+                 #   if rule.action == '-':                        
+                 #       rule.output.value = rule.output.value - rule.output_parameter
+                 #       rule.output.save()
+                        
+
+                  #  if rule.action == '&':                        
+                  #      rule.output.value = float(int(rule.output.value) & int(rule.output_parameter))
+                  #      rule.output.save()
+                  #      
+                  #  if rule.action == '|':                        
+                  #      rule.output.value = float(int(rule.output.value) | int(rule.output_parameter))
+                  #      rule.output.save()
 
                 
                 #rule.result = eval(calculation)
@@ -220,7 +363,7 @@ class Command(BaseCommand):
                             #cl.send(xmpp.Message( rule.output.name ,rule.description ))
                             #execfile('python xsend.py "{}" "{}"'.format(rule.output.name ,rule.description))
                             call(['python', '/home/pi/xsend.py' ,'{}'.format(rule.output.name), '{}'.format(rule.description)])
-                            print "Jabber: send"
+                            #print "Jabber: send"
                              
                             
                             
