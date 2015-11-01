@@ -10,6 +10,9 @@ urlpatterns = [
 	url(r'^archive/(?P<pk>[0-9]+)/$', views.archive, name='archive'),
 	url(r'^archive/$', views.archive, name='archive'),
 	
+
+	url(r'^save/$', views.save, name='save'),
+	
 	url(r'^rule/$', views.rule, name='rule'),
 	url(r'^rule/(?P<pk>[0-9]+)/$', views.rule, name='rule'),
 	url(r'^rule_delete/(?P<pk>[0-9]+)/$', RuleDelete.as_view(), name='rule_delete'),

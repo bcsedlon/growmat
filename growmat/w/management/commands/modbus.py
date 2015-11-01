@@ -71,7 +71,7 @@ def get_external_ip():
 #except Error:
 #    ext_ip = '0.0.0.0'
     
-call(['python', '/home/pi/xsend.py' ,'growmat@jabbim.cz', 'GROWMAT'])
+call(['python', '/home/pi/growmat/xsend.py' ,'growmat@jabbim.cz', 'GROWMAT'])
 
 #import subprocess
 from django.utils import timezone
@@ -362,7 +362,7 @@ class Command(BaseCommand):
                         if rule.output.index==0:
                             #cl.send(xmpp.Message( rule.output.name ,rule.description ))
                             #execfile('python xsend.py "{}" "{}"'.format(rule.output.name ,rule.description))
-                            call(['python', '/home/pi/xsend.py' ,'{}'.format(rule.output.name), '{}'.format(rule.description)])
+                            call(['python', '/home/pi/growmat/xsend.py' ,'{}'.format(rule.output.name), '{}'.format(rule.description)])
                             #print "Jabber: send"
                              
                             

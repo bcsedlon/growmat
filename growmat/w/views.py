@@ -20,6 +20,8 @@ from .models import RuleForm
 
 from .models import Archive
 
+import shutil
+
 #from test.utils import instrumented_test_render
 
 
@@ -46,6 +48,10 @@ class RuleDelete(DeleteView):
     success_url = reverse_lazy('w:rule/0')   
 
 # Create your views here.
+def save(request):
+    shutil.copy2('/home/pi/growmat/ramdisk/db.sqlite3', '/home/pi/growmat/db.sqlite3' )
+    return HttpResponseRedirect('/w/')
+
 def archive(request, pk=None):
     return render(request, 'w/archive.html')
     
