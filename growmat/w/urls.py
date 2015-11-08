@@ -1,4 +1,5 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
+
 
 from . import views
 
@@ -32,6 +33,9 @@ urlpatterns = [
 	#url(r'^d/(?P<pk>[0-9]+)$', InstrumentDelete.as_view()), name='d'),	
 	url(r'^list$', InstrumentList.as_view(), name='list'),
 	
+	#url(r'^', include('django.contrib.auth.urls')),
+	url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+	url(r'^logout/$', 'django.contrib.auth.views.logout', {'template_name': 'registration/logged_out2.html'}, name='logout'),
 
 	
 ]

@@ -1,0 +1,15 @@
+#!/bin/sh
+
+sync
+
+files=/home/pi/growmat/growmat/ramdisk/*.csv
+for file in $files
+do
+  filename="${file##*/}"
+  filenameWithoutExtension="${filename%.*}"
+  #echo "$filename"
+  
+  cat /home/pi/growmat/growmat/ramdisk/$filename >>  /home/pi/growmat/archives/$filename 
+  
+  rm /home/pi/growmat/growmat/ramdisk/$filename
+done

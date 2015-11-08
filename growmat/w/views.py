@@ -21,6 +21,12 @@ from .models import RuleForm
 from .models import Archive
 
 import shutil
+import os
+
+import os, tempfile, zipfile
+from django.core.servers.basehttp import FileWrapper
+from django.conf import settings
+import mimetypes
 
 #from test.utils import instrumented_test_render
 
@@ -49,11 +55,25 @@ class RuleDelete(DeleteView):
 
 # Create your views here.
 def save(request):
-    shutil.copy2('/home/pi/growmat/ramdisk/db.sqlite3', '/home/pi/growmat/db.sqlite3' )
+    os.system('sync')
+    shutil.copy2('/home/pi/growmat/growmat/ramdisk/db.sqlite3', '/home/pi/growmat/db.sqlite3' )
     return HttpResponseRedirect('/w/')
 
 def archive(request, pk=None):
-    return render(request, 'w/archive.html')
+    os.system('/home/pi/growmat/garchive')
+
+    filename     = '/home/pi/growmat/archives/'+ str(pk) + '.csv'
+    download_name = str(pk)  + '.csv'
+    wrapper      = FileWrapper(open(filename))
+    content_type = mimetypes.guess_type(filename)[0]
+    response     = HttpResponse(wrapper,content_type=content_type)
+    response['Content-Length']      = os.path.getsize(filename)    
+    response['Content-Disposition'] ='attachment; filename=%s'%download_name
+    return response
+  
+    return render(request, 'w/archive_csv.html')
+    
+    
     
     if pk:
         instrument0 = Instrument.objects.get(pk=pk)

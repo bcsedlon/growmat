@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-	'dbbackup',
+	#'dbbackup',
 	'w',
 )
 
@@ -79,8 +79,8 @@ WSGI_APPLICATION = 'growmat.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-		'NAME': os.path.join('/home/pi/growmat/ramdisk/', 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'ramdisk/db.sqlite3'),
+		#'NAME': os.path.join('/home/pi/growmat/ramdisk/', 'db.sqlite3'),
 	'OPTIONS': {
             'timeout': 30,
         }
@@ -105,14 +105,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '/w/static/w/'
 
 # sev
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
-    '/home/pi/ramdisk/',
 ]
 
 DBBACKUP_BACKUP_DIRECTORY = '/home/pi/growmat/'
 DBBACKUP_FILENAME_TEMPLATE = 'dbbackup'
 
+LOGIN_REDIRECT_URL = '/w/'
