@@ -88,6 +88,7 @@ station.serial.bytesize = 8
 #station.serial.parity   = serial.PARITY_NONE
 station.serial.stopbits = 2
 station.serial.timeout  = 0.05   # seconds
+station.serial.timeout  = 0.2   # seconds
 
 #instrument2 = minimalmodbus.Instrument('/dev/ttyAMA0', 2) # port name, slave address (in decimal)
 #print instrument2.serial.port          # this is the serial port name
@@ -124,7 +125,12 @@ def modbus_read(instrument, s):
             
             station.address = instrument.address
             #print station.address
-            value = station.read_register(instrument.type + instrument.index, 0)
+            try:
+                value = station.read_register(instrument.type + instrument.index, 0)
+            except:
+                #time.sleep(0.1)
+                value = station.read_register(instrument.type + instrument.index, 0)
+                
             if value == 0:#sys.maxint:
                 instrument.status = instrument.status | Instrument.IV
                 
@@ -143,6 +149,11 @@ def modbus_read(instrument, s):
             instrument.save()
             #print 'sensor n/a'
             #s.stdout.write('sensor does not response, address {}'.format(instrument.address))
+           
+            
+            #print "Unexpected error:", sys.exc_info()
+        
+        
         #instrument.save()
     
     
@@ -167,6 +178,7 @@ class Command(BaseCommand):
                 #self.stdout.write('reading index {}'.format(instrument.type + instrument.index))
                 if instrument.address > 0:
                     modbus_read(instrument,self)
+                    #time.sleep(0.5)
                     #self.stdout.write('status {}'.format(instrument.status))
                 if instrument.address == 0:
                     if instrument.type == 0:
