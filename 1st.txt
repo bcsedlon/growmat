@@ -1,0 +1,98 @@
+sudo iwlist wlan0 scan
+
+sudo nano /etc/wpa_supplicant/wpa_supplicant.conf
+>
+network={
+    ssid="Vandrehjem3"
+    psk="LVH51C03"
+}
+	
+sudo raspi-config
+>
+expand filesystem
+enable ssi, i2c, camera
+disable serial console
+
+sudo reboot
+
+sudo apt-get install xrdp
+
+sudo apt-get install samba samba-common-bin
+sudo nano /etc/samba/smb.conf
+>
+[pi]
+   comment= Pi
+   path=/home/pi
+   browseable=Yes
+   writeable=Yes
+   only guest=no
+   create mask=0777
+   directory mask=0777
+   public=no
+   
+sudo smbpasswd -a pi
+ 
+mkdir growmat
+cd growmat
+mkdir growmat
+cd growmat
+mkdir ramdisk
+ 
+sudo nano /etc/fstab
+ >
+tmpfs /home/pi/growmat/growmat/ramdisk tmpfs nodev,nosuid,size=8M 0 0 
+ 
+sudo mount -a
+ 
+cd ~
+mkdir downloads
+cd downloads
+ 
+wget https://bootstrap.pypa.io/get-pip.py
+ 
+sudo python get-pip.py
+ 
+sudo pip install minimalmodbus
+
+sudo apt-get install python-smbus
+sudo apt-get install i2c-tools
+
+sudo pip install Django
+
+cd ~/downloads
+git clone https://github.com/growmat/control.git
+
+cp -r controraspberry
+l/* ~/growmat/
+
+cd ~/growmat
+
+sudo chmod +x g
+sudo chmod +x gstop
+sudo chmod +x gshow
+sudo chmod +x gm
+sudo chmod +x gr
+sudo chmod +x gstop
+sudo chmod +x gshow
+sudo chmod +x gm
+sudo chmod +x garchive
+
+mkdir archives
+
+sudo crontab -e
+>
+@reboot /home/pi/growmat/g
+@hourly /home/pi/growmat/garchive
+
+sudo reboot
+
+sudo apt-get install arduino
+
+
+
+
+
+
+
+
+ 
