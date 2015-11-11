@@ -88,7 +88,7 @@ station.serial.bytesize = 8
 #station.serial.parity   = serial.PARITY_NONE
 station.serial.stopbits = 2
 station.serial.timeout  = 0.05   # seconds
-station.serial.timeout  = 0.2   # seconds
+station.serial.timeout  = 0.5   # seconds
 
 #instrument2 = minimalmodbus.Instrument('/dev/ttyAMA0', 2) # port name, slave address (in decimal)
 #print instrument2.serial.port          # this is the serial port name

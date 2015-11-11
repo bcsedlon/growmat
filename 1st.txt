@@ -13,6 +13,11 @@ expand filesystem
 enable ssi, i2c, camera
 disable serial console
 
+sudo nano /etc/modules
+>
+i2c-bcm2708 
+i2c-dev
+
 sudo reboot
 
 sudo apt-get install xrdp
@@ -56,14 +61,19 @@ sudo pip install minimalmodbus
 
 sudo apt-get install python-smbus
 sudo apt-get install i2c-tools
+sudo python setup.py install
 
 sudo pip install Django
 
 cd ~/downloads
+wget http://kent.dl.sourceforge.net/project/xmpppy/xmpppy/0.5.0-rc1/xmpppy-0.5.0rc1.tar.gz
+tar -zxvf xmpppy-0.5.0rc1.tar.gz
+cd xmpppy-0.5.0rc1
+
+
 git clone https://github.com/growmat/control.git
 
-cp -r controraspberry
-l/* ~/growmat/
+rsync -a control/ ~/growmat/
 
 cd ~/growmat
 
@@ -86,9 +96,30 @@ sudo crontab -e
 
 sudo reboot
 
+
+git config --global user.name "info@growmat.czweb.org"
+git config --global user.email info@growmat.czweb.org
+git add *.txt
+git commit
+git push
+
+
 sudo apt-get install arduino
+mkdir sketchbook
+mkdir libraries
+ 
+cd ~/downloads
+mkdir simplemodbusng
+cd simplemodbusng
+wget https://github.com/angeloc/simplemodbusng/archive/master.zip
 
+unzip master.zip
+cp -r simplemodbusng-master ~/sketchbook/libraries
 
+cd ~/sketchbook
+git clone https://github.com/growmat/dht.git
+ 
+to do dht lib
 
 
 
