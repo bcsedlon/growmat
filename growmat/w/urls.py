@@ -4,7 +4,7 @@ from django.conf.urls import url, include
 from . import views
 
 from .models import InstrumentList
-from .views import InstrumentCreate, InstrumentUpdate, InstrumentDelete, RuleDelete
+from .views import InstrumentCreate, InstrumentUpdate, InstrumentDelete, RuleDelete, PeriodDelete
 
 urlpatterns = [
 	#url(r'^$', views.index, name='index'),
@@ -17,6 +17,10 @@ urlpatterns = [
 	url(r'^rule/$', views.rule, name='rule'),
 	url(r'^rule/(?P<pk>[0-9]+)/$', views.rule, name='rule'),
 	url(r'^rule_delete/(?P<pk>[0-9]+)/$', RuleDelete.as_view(), name='rule_delete'),
+	
+	url(r'^period/$', views.period, name='period'),
+	url(r'^period/(?P<pk>[0-9]+)/$', views.period, name='period'),
+	url(r'^period_delete/(?P<pk>[0-9]+)/$', PeriodDelete.as_view(), name='period_delete'),
 	
 	url(r'^(?P<pk>[0-9]+)/$', views.index, name='index'),
 	url(r'^$', views.index, name='index'),

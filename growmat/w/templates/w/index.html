@@ -1,5 +1,7 @@
 {% load tz %}
 
+
+
 <html>
 <head>
 {% if form or form0 %}
@@ -12,6 +14,7 @@
 <h3>
 {% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
 <a href="{% url 'w:index' %}">Instruments</a>
+<a href="{% url 'w:period' %}">Periods</a>
 <a href="{% url 'w:rule' %}">Rules</a>
 <a href="{% url 'w:archive' %}">Archives</a>
 <a href="{% url 'w:webcam' %}">Webcam</a>
@@ -34,7 +37,7 @@
 {% endif %}
 
 <table border=1>
-		<tr><th>ID</th><th>NAME</th><th>ADDRESS</th><th>TYPE</th><th>INDEX</th><th>UPDATE</th><th>DELETE</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th><th>ARCHIVE</th></tr>
+		<tr><th>ID</th><th>NAME</th><th>ADDRESS</th><th>TYPE</th><th>INDEX</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th><th>ARCHIVE</th></tr>
 		
 		{% if form0 %}
 		<tr>
@@ -44,10 +47,10 @@
         	<td>{{ form0.address }}</td>
             <td>{{ form0.type }}</td>
             <td>{{ form0.index }}</td>
-            <td><input type="submit" name="create" value="Create" /></td>
-            <td></td>
             <td>{{ form0.value }}</td>
             <td>{{ form0.status }}</td>
+            <td></td>
+            <td><input type="submit" name="create" value="Create" /></td>
             <td></td>
             <td></td>
         </form>
@@ -65,12 +68,12 @@
             	<td>{{ form.address }}</td>
             	<td>{{ form.type }}</td>
             	<td>{{ form.index }}</td>
-            	<td><input type="submit" name="save" value="Save" /></td>
-            	<td></td>
                 <td>{{ form.value }}</td>
                 <td>{{ form.status }}</td>
-            	<td>{{ instrument.datetime}} </td>
-            	 <td></td>
+            	<td></td>
+            	<td><input type="submit" name="save" value="Save" /></td>
+            	<td></td>
+            	<td></td>
             </form>
             <tr>
         	{% else %}
@@ -79,12 +82,12 @@
             	<td>{{ instrument.name }}</td>
             	<td>{{ instrument.address }}</td>
             	<td>{{ instrument.get_type_display }}</td>
-            	<td>{{ instrument.get_index_display }}</td>
-            	<td>{% if user.is_authenticated %}<a href="{% url 'w:index' instrument.id %}">Update</a>{% endif %}</td>
-            	<td>{% if user.is_authenticated %}<a href="{% url 'w:d' instrument.id %}">Delete</a>{% endif %}</td>
-            	<td>{{ instrument.value }} </td>
+            	<td>{{ instrument.index }}</td>
+               	<td>{{ instrument.value }} </td>
             	<td>{{ instrument.status }} </td>
             	<td>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} </td>
+            	<td>{% if user.is_authenticated %}<a href="{% url 'w:index' instrument.id %}">Update</a>{% endif %}</td>
+            	<td>{% if user.is_authenticated %}<a href="{% url 'w:d' instrument.id %}">Delete</a>{% endif %}</td>
             	<td><a href="{% url 'w:archive' instrument.id %}">Archive</a></td>
             	 
             <tr>

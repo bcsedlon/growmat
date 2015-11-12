@@ -40,7 +40,8 @@ class Instrument(models.Model):
 	
 	address = models.IntegerField(default=0)
 	type = models.IntegerField(choices=INSTRUMENT_TYPE, default=0)
-	index = models.IntegerField(choices=INSTRUMENT_INDEX, default=0)
+	#index = models.IntegerField(choices=INSTRUMENT_INDEX, default=0)
+	index = models.IntegerField(default=0)
 	name = models.CharField(default='NEW',  max_length=256)
 	value = models.FloatField(default=0)
 	status = models.IntegerField(default=1) 
@@ -101,8 +102,8 @@ class Rule(models.Model):
          			('>', '>'),
          			('>=', '>='),
     			    ('!=', '!='),
-    			    ('&', 'AND'),
-    			    ('|', 'OR'),
+    			    ('&', '&'),
+    			    ('|', '|'),
 	)
 	
 	ACTION_TYPE = (
@@ -111,9 +112,12 @@ class Rule(models.Model):
 					('|', 'OR'),
 					('+', '+'),
 					('-', '-'),
+					('*', '*'),
+					('/', '/'),
+					('%', '%'),
 	)
 	
-
+	priority = models.FloatField(default=0, blank=True)
 	period = models.ForeignKey(Period)
 	input = models.ForeignKey(Instrument, related_name='input_instrument')
 	input_attribute = models.CharField(choices=ATTRIBUTE_TYPE, default=0, max_length=6)
@@ -131,7 +135,7 @@ class Rule(models.Model):
 class RuleForm(ModelForm):
     class Meta:
         model = Rule
-        fields = ['period', 'input', 'input_attribute', 'operation', 'input_parameter', 'output', 'output_attribute', 'action', 'output_parameter', 'description', 'result', 'result0', 'datetime']
+        fields = ['priority', 'period', 'input', 'input_attribute', 'operation', 'input_parameter', 'output', 'output_attribute', 'action', 'output_parameter', 'description', 'result', 'result0', 'datetime']
         
     def __init__(self, *args, **kwargs):
         super(RuleForm, self).__init__(*args, **kwargs)

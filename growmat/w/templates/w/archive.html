@@ -7,6 +7,7 @@
 <h3>
 {% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
 <a href="{% url 'w:index' %}">Instruments</a>
+<a href="{% url 'w:period' %}">Periods</a>
 <a href="{% url 'w:rule' %}">Rules</a>
 <a href="{% url 'w:archive' %}">Archives</a>
 <a href="{% url 'w:webcam' %}">Webcam</a>

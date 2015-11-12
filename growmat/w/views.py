@@ -18,6 +18,9 @@ from .models import InstrumentList
 from .models import Rule
 from .models import RuleForm
 
+from .models import Period
+from .models import PeriodForm
+
 from .models import Archive
 
 import shutil
@@ -52,6 +55,10 @@ class InstrumentDelete(DeleteView):
 class RuleDelete(DeleteView):
     model = Rule
     success_url = reverse_lazy('w:rule/0')   
+
+class PeriodDelete(DeleteView):
+    model = Period
+    success_url = reverse_lazy('w:period/0')
 
 # Create your views here.
 def save(request):
@@ -234,7 +241,7 @@ def rule(request, pk=None):
                 return HttpResponseRedirect('/w/rule/')
             
             form.pk = 0
-            rules = Rule.objects.order_by('pk')    
+            rules = Rule.objects.order_by('priority')    
             context = RequestContext(request, {
                 'rules': rules, 'form':form
             })
@@ -248,7 +255,7 @@ def rule(request, pk=None):
 
                 return HttpResponseRedirect('/w/rule/')
             form.pk = pk
-            rules = Rule.objects.order_by('pk')    
+            rules = Rule.objects.order_by('priority')    
             context = RequestContext(request, {
                 'rules': rules, 'form':form
             })
@@ -260,7 +267,7 @@ def rule(request, pk=None):
             return HttpResponseRedirect('/w/rule/')
         
     else:
-        rules = Rule.objects.order_by('pk')
+        rules = Rule.objects.order_by('priority')
         
         if pk:
             if int(pk)>0:
@@ -415,3 +422,82 @@ def instrument(request, instrument_id):
 		
 		form = InstrumentForm(instance = instrument)
 		return render(request, 'w/instrument.html', {'form': form, 'instrument': instrument})
+        
+        
+# Create your views here.
+def period(request, pk=None):
+    form = PeriodForm()
+   
+    if request.method == 'POST':
+        if 'create' in request.POST:
+            form = PeriodForm(request.POST)
+            if form.is_valid():
+                form.save()
+            #print form.errors
+                return HttpResponseRedirect('/w/period/')
+            
+            form.pk = 0
+            periods = Period.objects.order_by('pk')    
+            context = RequestContext(request, {
+                'periods': periods, 'form':form
+            })
+            return render(request, 'w/period.html', context)
+    
+        if 'save' in request.POST:
+            period = Period.objects.get(pk=pk)
+            form = PeriodForm(request.POST, instance = period)
+            if form.is_valid():
+                form.save()
+
+                return HttpResponseRedirect('/w/period/')
+            form.pk = pk
+            periods = Period.objects.order_by('pk')    
+            context = RequestContext(request, {
+                'periods': periods, 'form':form
+            })
+            return render(request, 'w/period.html', context)
+                
+        if 'delete' in request.POST:
+            period = Period.objects.get(pk=pk)
+            period.delete()
+            return HttpResponseRedirect('/w/period/')
+        
+    else:
+        periods = Period.objects.order_by('pk')
+        
+        if pk:
+            if int(pk)>0:
+                period = Period.objects.get(pk=pk)
+                form = PeriodForm(instance = period)
+            
+                form.pk=int(pk)
+                
+                context = RequestContext(request, {
+                    'periods': periods,  'form':form
+                })
+
+                return render(request, 'w/period.html', context)
+             
+            if int(pk)==0: 
+                form = PeriodForm() 
+                form.pk = 0
+                context = RequestContext(request, {
+                    'periods': periods,  'form':form
+                })
+
+                return render(request, 'w/period.html', context) 
+
+        context = RequestContext(request, {
+                    'periods': periods
+                })
+
+        return render(request, 'w/period.html', context) 
+                
+    periods = Period.objects.order_by('pk')
+    
+    context = RequestContext(request, {
+        'periods': periods, 'form':form
+    })
+
+    return render(request, 'w/period.html', context)
+

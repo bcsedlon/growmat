@@ -12,6 +12,7 @@
 <h3>
 {% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
 <a href="{% url 'w:index' %}">Instruments</a>
+<a href="{% url 'w:period' %}">Periods</a>
 <a href="{% url 'w:rule' %}">Rules</a>
 <a href="{% url 'w:archive' %}">Archives</a>
 <a href="{% url 'w:webcam' %}">Webcam</a>
@@ -33,13 +34,14 @@
 
 
 <table border=1>
-		<tr><th>ID</th><th>PERIOD</th><th>INPUT</th><th>INPUT ATTRIBUTE</th><th>OPERATION</th><th>INPUT PARAMETER</th><th>OUTPUT</th><th>OUTPUT ATTRIBUTE</th><th>ACTION</th><th>OUTPUT PARAMETER</th><th>DESCRIPTION</th><th>UPDATE</th><th>DELETE</th><th>RESULT</th><th>DATETIME</th></tr>
+		<tr><th>ID</th><th>PRIORITY</th><th>PERIOD</th><th>INPUT</th><th>INPUT ATTRIBUTE</th><th>OPERATION</th><th>INPUT PARAMETER</th><th>OUTPUT</th><th>OUTPUT ATTRIBUTE</th><th>ACTION</th><th>OUTPUT PARAMETER</th><th>DESCRIPTION</th><th>RESULT</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th></tr>
 		{% if form.pk = 0 %}
 		
 		
 		<tr>
 		<form action="" method="post">{% csrf_token %}
         	<td>NEW</td>
+        	<td>{{ form.priority }}</td>
         	<td>{{ form.period }}</td>
             <td>{{ form.input }}</td>
             <td>{{ form.input_attribute }}</td>
@@ -50,9 +52,9 @@
             <td>{{ form.action }}</td>
             <td>{{ form.output_parameter }}</td>
             <td>{{ form.description }}</td>
+			<td></td>
+            <td></td>
             <td><input type="submit" name="create" value="Create" /></td>
-            <td></td>
-            <td></td>
             <td></td>
 
         </form>
@@ -65,6 +67,7 @@
         	<tr>
         	<form action="" method="post">{% csrf_token %}
             	<td>{{ form.pk }}</td>
+            	<td>{{ form.priority }}</td>
             	<td>{{ form.period }}</td>
             	<td>{{ form.input }}</td>
             	<td>{{ form.input_attribute }}</td>
@@ -75,15 +78,16 @@
             	<td>{{ form.action }}</td>
             	<td>{{ form.output_parameter }}</td>
             	<td>{{ form.description }}</td>
+				<td></td>
+            	<td></td>
             	<td><input type="submit" name="save" value="Save" /></td>
-            	<td></td>
-            	<td></td>
             	<td></td>
             </form>
             <tr>
         	{% else %}
             <tr>
              	<td>{{ rule.id }}</td>
+             	<td>{{ rule.priority }}</td>
              	<td>{{ rule.period.name }}</td>
             	<td>{{ rule.input.name }}</td>
         		<td>{{ rule.get_input_attribute_display }}</td>
@@ -94,10 +98,10 @@
             	<td>{{ rule.get_action_display }}</td>
             	<td>{{ rule.output_parameter }}</td>
             	<td>{{ rule.description }}</td>
-            	<td>{% if user.is_authenticated %}<a href="{% url 'w:rule' rule.id %}">Update</a>{% endif %}</td>
-            	<td>{% if user.is_authenticated %}<a href="{% url 'w:rule_delete' rule.id %}">Delete</a>{% endif %}</td>
             	<td>{{ rule.result }}</td>
             	<td>{{ rule.datetime|date:"D d M Y" }} {{ rule.datetime|time:"H:i:s" }} </td>
+                <td>{% if user.is_authenticated %}<a href="{% url 'w:rule' rule.id %}">Update</a>{% endif %}</td>
+            	<td>{% if user.is_authenticated %}<a href="{% url 'w:rule_delete' rule.id %}">Delete</a>{% endif %}</td>
             <tr>
             {% endif %}
         {% endfor %}

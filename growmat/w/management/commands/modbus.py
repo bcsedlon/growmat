@@ -167,7 +167,7 @@ class Command(BaseCommand):
         """ Do your work here """
         
         while 1:
-            
+            time_now = int(strftime("1%H%M%S", gmtime()))
             
             instruments = Instrument.objects.order_by('pk')
             #self.stdout.write('There are {} things!'.format(instruments.count()))
@@ -190,8 +190,13 @@ class Command(BaseCommand):
             
             
             
-            rules = Rule.objects.order_by('pk')
+            rules = Rule.objects.order_by('priority')
             for rule in rules:
+              time_from =  int(rule.period.time_from.strftime('1%H%M%S'))
+              time_to =  int(rule.period.time_to.strftime('1%H%M%S'))
+              
+              
+              if time_from < time_now & time_now <= time_to:
                 
                 if rule.input_attribute == 'VALUE':                            
                     a = rule.input.value
