@@ -2,14 +2,34 @@
 
 sync
 
+d="$(date +'%Y%m%d')"
+
 files=/home/pi/growmat/growmat/ramdisk/*.csv
+
+
 for file in $files
 do
   filename="${file##*/}"
+
+  if [ $filename = "*.csv" ]; then
+               #echo expression evaluated as true
+  else
+               #echo expression evaluated as false
+  
+  #echo $filename          
+
+  newfilename="$d-$filename"
   filenameWithoutExtension="${filename%.*}"
-  #echo "$filename"
+  echo "$newfilename"
   
-  cat /home/pi/growmat/growmat/ramdisk/$filename >>  /home/pi/growmat/archives/$filename 
+  cat /home/pi/growmat/growmat/ramdisk/$filename >>  /home/pi/growmat/archives/$newfilename 
   
-  rm /home/pi/growmat/growmat/ramdisk/$filename
+  rm -f /home/pi/growmat/growmat/ramdisk/$filename
+  fi
+  
+done
+
+for file in $files
+do
+print $file
 done

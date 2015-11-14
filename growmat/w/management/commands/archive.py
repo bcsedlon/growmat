@@ -44,6 +44,7 @@ class Command(BaseCommand):
                 f.write(str(instrument.value))
                 f.write(';')
                 f.write(str(instrument.status))
+                f.write(';')
                 f.write('\n')
                 f.close()
                 

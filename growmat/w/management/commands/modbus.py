@@ -5,6 +5,8 @@ import time
 import datetime
 import time
 from time import gmtime, strftime
+from django.utils import timezone
+from django.utils import dateformat
 import sys
 
 #print Archive.objects.raw('DELETE FROM w_archive WHERE 1')
@@ -16,7 +18,8 @@ import sys
 #print '...'
 
 import smbus
-import time
+
+
 
 # i2c address of PCF8574
 PCF8574=0x20
@@ -311,6 +314,10 @@ class Command(BaseCommand):
                     if op == '=':
                         r = b
                     else:
+                        if op[0:1] == '&' or op == '|':
+                            a = int(a)
+                            b = int(b)
+                        
                         exp = '{} {} {}'.format(a, op, b)
                         r = eval(exp)
                         #print rule.description
@@ -370,6 +377,18 @@ class Command(BaseCommand):
                     rule.result0 = rule.result
                     rule.datetime = timezone.now()
                     rule.save()
+                    
+                    fn =  '/home/pi/growmat/growmat/ramdisk/0.csv'
+                    f = open(fn, 'a+')
+                    #f.write(dateformat.format(timezone.now(), 'Y-m-d H:i:s'))
+                    f.write(str(rule.id))
+                    f.write(';')
+                    f.write(dateformat.format(rule.datetime,  'Y-m-d H:i:s'))
+                    f.write(';')
+                    f.write(str(rule.result))
+                    f.write(';')
+                    f.write('\n')
+                    f.close()
                     
                     #print str(rule.output.name)
                     #print str(rule.output.address)

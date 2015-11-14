@@ -11,19 +11,27 @@
 <a href="{% url 'w:rule' %}">Rules</a>
 <a href="{% url 'w:archive' %}">Archives</a>
 <a href="{% url 'w:webcam' %}">Webcam</a>
+
  {% if user.is_authenticated %}<a href="{% url 'w:save' %}">SAVE DB</a>{% endif %}
 </h3>
 
 
- {% if not user.is_authenticated %}
- <a href="{% url 'w:login' %}">Please login to edit data.</a>
- {% endif %}
+{% if not user.is_authenticated %}
+<a href="{% url 'w:login' %}">Please login to edit data.</a>
+{% endif %}
+<br>
 
 {% if form %}
 	{% if form.errors %}<p><strong>{{ form.errors }}</strong></p>{% endif %}
 {% endif %}
 
+{% load staticfiles %}
 
+{% for archive in archives %}
+<a href="{% static  archive %}">{{ archive }}</a><br>
+{% endfor %}
+
+{% comment %}
 <table border=1>
 		<tr><th>ID</th><th>INSTRUMENT</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th></tr>
 		
@@ -33,6 +41,7 @@
 
         	
             <tr>
+            	<td>{{ archive }}</td>
             	<td>{{ archive.id }}</td>
             	<td>{{ archive.instrument.name }}</td>
             	<td>{{ archive.value }}</td>
@@ -42,6 +51,9 @@
        {% endfor %}
     
 </table>
+
+{% endcomment %}
+
 </body>
 </html>
 

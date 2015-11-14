@@ -25,6 +25,7 @@ from .models import Archive
 
 import shutil
 import os
+import fnmatch
 
 import os, tempfile, zipfile
 from django.core.servers.basehttp import FileWrapper
@@ -64,9 +65,32 @@ class PeriodDelete(DeleteView):
 def save(request):
     os.system('sync')
     shutil.copy2('/home/pi/growmat/growmat/ramdisk/db.sqlite3', '/home/pi/growmat/db.sqlite3' )
-    return HttpResponseRedirect('/w/')
+    
+    context = RequestContext(request, {
+            'message': 'Database saved!' })
+    
+    return render(request, 'w/message.html', context)
 
 def archive(request, pk=None):
+    
+    os.system('/home/pi/growmat/garchive')
+    
+    path = '/home/pi/growmat/archives'
+    if pk is None:
+        pk = '*'
+    
+    f = []
+    for file in os.listdir(path):
+        if fnmatch.fnmatch(file, '*-' + str(pk) + '.csv'):
+            f.append(file)
+            #print file
+
+    context = RequestContext(request, {
+            'archives': f })
+    
+    return render(request, 'w/archive.html', context)
+    
+    
     os.system('/home/pi/growmat/garchive')
 
     filename     = '/home/pi/growmat/archives/'+ str(pk) + '.csv'

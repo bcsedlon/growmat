@@ -1,6 +1,9 @@
+{% extends 'w/base.html' %}
+{% block content %}
 <h2>{{ object.id }} {{ object.name }}</h2>
 <hr>
 <form action="{% url 'w:index' instrument.id %}" method="post">{% csrf_token %}
     <p>Are you sure you want to delete"?</p>
     <input type="submit" name="delete" value="Confirm" />
 </form>
+{% endblock %}
