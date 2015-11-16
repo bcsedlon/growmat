@@ -1,149 +1,68 @@
-{% load tz %}
-
-
-
+{% load staticfiles %}
 <html>
-<head>
-{% if form or form0 %}
-{% else %}
-<meta http-equiv="refresh" content="5">
-{% endif %}
-</head>
+	<head>
+		<title>GROWMAT</title>
+		<meta http-equiv="refresh" content="5">
+		<link rel="stylesheet" type="text/css" href="{% static 'w/style.css' %}">
+    </head>
+
 <body>
 
-<h3>
-{% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
-<a href="{% url 'w:index' %}">Instruments</a>
-<a href="{% url 'w:period' %}">Periods</a>
-<a href="{% url 'w:rule' %}">Rules</a>
-<a href="{% url 'w:archive' %}">Archives</a>
-<a href="{% url 'w:webcam' %}">Webcam</a>
- {% if user.is_authenticated %}<a href="{% url 'w:save' %}">SAVE DB</a>{% endif %}
-</h3>
+<a href="{% url 'w:instrument' %}">System administration</a>
 
-
- {% if not user.is_authenticated %}
- <a href="{% url 'w:login' %}">Please login to edit data.</a>
-  {% else %}
-<a href="{% url 'w:index' 0 %}">Add Instrument</a> 
- {% endif %}
-
-
-
-
-{% if form %}
-	{% if form.errors %}<p><strong>{{ form.errors }}</strong></p>{% endif %}
-
-{% endif %}
+{% comment %}
+{% block content %}
 
 <table border=1>
-		<tr><th>ID</th><th>NAME</th><th>ADDRESS</th><th>TYPE</th><th>INDEX</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th><th>ARCHIVE</th></tr>
-		
-		{% if form0 %}
-		<tr>
-		<form action="" method="post">{% csrf_token %}
-        	<td>NEW</td>
-            <td>{{ form0.name }}</td>
-        	<td>{{ form0.address }}</td>
-            <td>{{ form0.type }}</td>
-            <td>{{ form0.index }}</td>
-            <td>{{ form0.value }}</td>
-            <td>{{ form0.status }}</td>
-            <td></td>
-            <td><input type="submit" name="create" value="Create" /></td>
-            <td></td>
-            <td></td>
-        </form>
-        <tr>
-        {% endif %}
-                
-        {% for instrument in instruments %}
-
-        	{% if instrument.pk = form.pk %}
-        	
-        	<tr>
-        	<form action="" method="post">{% csrf_token %}
-            	<td>{{ form.pk }}</td>
-            	<td>{{ form.name }}</td>
-            	<td>{{ form.address }}</td>
-            	<td>{{ form.type }}</td>
-            	<td>{{ form.index }}</td>
-                <td>{{ form.value }}</td>
-                <td>{{ form.status }}</td>
-            	<td></td>
-            	<td><input type="submit" name="save" value="Save" /></td>
-            	<td></td>
-            	<td></td>
-            </form>
-            <tr>
+		<tr><th>NAME</th><th>VALUE</th><th>STATUS</th></tr>
+       {% for instrument in instruments %}
+			{% if instrument.status > 0 and instrument.status < 4 %}
+        		<tr class="NT">
+        	{% elif instrument.status = 4 %}
+        		<tr class="W">
+        	{% elif instrument.status = 8 %}
+        		<tr class="A">
         	{% else %}
-            <tr>
-            	<td>{{ instrument.id }}</td>
+        		<tr>
+        	{% endif %}
             	<td>{{ instrument.name }}</td>
-            	<td>{{ instrument.address }}</td>
-            	<td>{{ instrument.get_type_display }}</td>
-            	<td>{{ instrument.index }}</td>
                	<td>{{ instrument.value }} </td>
             	<td>{{ instrument.status }} </td>
-            	<td>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} </td>
-            	<td>{% if user.is_authenticated %}<a href="{% url 'w:index' instrument.id %}">Update</a>{% endif %}</td>
-            	<td>{% if user.is_authenticated %}<a href="{% url 'w:d' instrument.id %}">Delete</a>{% endif %}</td>
-            	<td><a href="{% url 'w:archive' instrument.id %}">Archive</a></td>
-            	 
-            <tr>
-            {% endif %}
+            </tr>
+            
         {% endfor %}
-        
-        
-        
-    
-</table>
+ </table>
+{% endblock %}
+{% endcomment %}
+
+<table border=0>
+		
+        {% for instrument in instruments %}
+			
+			{% if instrument.status > 0 and instrument.status < 4 %}
+        		<tr class="NT">
+        	{% elif instrument.status = 4 %}
+        		<tr class="W">
+        	{% elif instrument.status = 8 %}
+        		<tr class="A">
+        	{% else %}
+        		<tr class="normal">
+        	{% endif %}
+            	
+            	<th>
+            	{{ instrument.name }}
+            	</th>
+            	<th>
+               	{{ instrument.value }}
+            	({{ instrument.status }})
+            	</th>
+            
+            </tr>
+        {% endfor %}
+ </table>
+
 
 
 
 </body>
-</html>
-
-
-
-
-
-{% comment %}
-
-
-<form action="{% url 'w:instrumentAdd'  %}" method="post">
-{% csrf_token %}
-<input type="submit" name="addInstrument" value="ADD INSTRUMENT"> 
-</form>
-
-{% if instruments %}
-    <table = border=1>
-    {% for instrument in instruments %}
-        <tr><td><a href="{% url 'w:instrument' instrument.id %}">{{instrument.id}}</a></td><td>{{ instrument.address }} {{ instrument.system_name }} {{ instrument.user_name }}</td></tr>
-    {% endfor %}
-    </table>
-{% else %}
-    <p>No instrumets are available.</p>
-{% endif %}
-
-
-{% if instruments %}
-    <table = border=1>
-    {% for instrument in instruments %}
-        <tr>
-		<td><a href="{% url 'w:instrument' instrument.id %}">{{instrument.id}}</a>
-	
-		{% for field, value in instrument.fields.iteritems %}
-            <td>{{field}}</td>
-            <td>{{value }}</td>
-		{% endfor %}
-        </tr>		
-    {% endfor %}
-    </table>
-{% else %}
-    <p>No instrumets are available.</p>
-{% endif %}
-
-{{list}}
-
-{% endcomment %}
+</html> 

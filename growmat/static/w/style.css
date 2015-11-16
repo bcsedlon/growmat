@@ -1,0 +1,33 @@
+tr.NT {
+    background-color: gray;
+}
+tr.IV {
+    background-color: gray;
+}
+tr.W {
+    background-color: yellow;
+}
+tr.A {
+    background-color: red;
+}
+
+
+td.normal {
+    text-align: center;
+}
+td.NT {
+    text-align: center;
+    background-color: gray;
+}
+td.IV {
+    text-align: center;
+    background-color: gray;
+}
+td.W {
+    text-align: center;
+    background-color: yellow;
+}
+td.A {
+    text-align: center;
+    background-color: red;
+}

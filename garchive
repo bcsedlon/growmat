@@ -11,25 +11,26 @@ for file in $files
 do
   filename="${file##*/}"
 
-  if [ $filename = "*.csv" ]; then
+  if [ $filename != "*.csv" ]; then
                #echo expression evaluated as true
-  else
+  #else
                #echo expression evaluated as false
   
   #echo $filename          
 
   newfilename="$d-$filename"
   filenameWithoutExtension="${filename%.*}"
-  echo "$newfilename"
+  #echo "$newfilename"
   
-  cat /home/pi/growmat/growmat/ramdisk/$filename >>  /home/pi/growmat/archives/$newfilename 
+  mkdir -p /home/pi/growmat/archives/$filenameWithoutExtension
+  cat /home/pi/growmat/growmat/ramdisk/$filename >>  /home/pi/growmat/archives/$filenameWithoutExtension/$newfilename 
   
   rm -f /home/pi/growmat/growmat/ramdisk/$filename
   fi
   
 done
 
-for file in $files
-do
-print $file
-done
+#for file in $files
+#do
+#print $file
+#done

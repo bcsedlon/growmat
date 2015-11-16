@@ -13,7 +13,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
 from .models import Instrument
 from .models import InstrumentForm
-from .models import InstrumentList
+#from .models import InstrumentList
 
 from .models import Rule
 from .models import RuleForm
@@ -48,10 +48,10 @@ class InstrumentUpdate(UpdateView):
     def get_success_url(self):
         return reverse('w:list')
 
+
 class InstrumentDelete(DeleteView):
     model = Instrument
-    success_url = reverse_lazy('w:list')   
-
+    success_url = reverse_lazy('w:instrument/0')   
 
 class RuleDelete(DeleteView):
     model = Rule
@@ -71,13 +71,13 @@ def save(request):
     
     return render(request, 'w/message.html', context)
 
-def archive(request, pk=None):
+def archive(request, pk=0):
     
     os.system('/home/pi/growmat/garchive')
     
-    path = '/home/pi/growmat/archives'
-    if pk is None:
-        pk = '*'
+    path = '/home/pi/growmat/archives/' + str(pk) 
+    #if pk is None:
+    #    pk = '*'
     
     f = []
     for file in os.listdir(path):
@@ -121,19 +121,14 @@ def archive(request, pk=None):
 
 def webcam(request, pk=None):
 	return render(request, 'w/webcam.html')
+
+def index(request):
+    instruments = Instrument.objects.order_by('pk')
+    context = RequestContext(request, {
+            'instruments': instruments })
+    return render(request, 'w/index.html', context)        
 	
-def index(request, pk=None):
-    #print pk
-    #if request.method == 'POST':
-    #    form = InstrumentForm(request.POST, instance=instrument)
-    
-    #objects = Instrument.objects.order_by('address')
-
-
-
-    
-
-    
+def instrument(request, pk=None):
     form = InstrumentForm()
 
    
@@ -147,13 +142,13 @@ def index(request, pk=None):
             if form.is_valid():
                 form.save()
             #print form.is_valid()
-                return HttpResponseRedirect('/w/')
+                return HttpResponseRedirect('/w/instrument/')
             form.pk = 0
             instruments = Instrument.objects.order_by('pk')    
             context = RequestContext(request, {
                 'instruments': instruments, 'form':form
             })
-            return render(request, 'w/index.html', context)
+            return render(request, 'w/instrument.html', context)
 
         #else:
         if 'save' in request.POST:
@@ -166,14 +161,14 @@ def index(request, pk=None):
                 #print 'update'
                 form.save()
                 #print form.is_valid()
-                return HttpResponseRedirect('/w/')
+                return HttpResponseRedirect('/w/instrument')
             
             form.pk = pk
             instruments = Instrument.objects.order_by('pk')    
             context = RequestContext(request, {
                 'instruments': instruments, 'form':form
             })
-            return render(request, 'w/index.html', context)
+            return render(request, 'w/instrument.html', context)
 
 
                 
@@ -182,16 +177,17 @@ def index(request, pk=None):
             instrument = Instrument.objects.get(pk=pk)
             instrument.delete()
             pk=0
-            return HttpResponseRedirect('/w/')
+            return HttpResponseRedirect('/w/instrument')
     
     else:
         instruments = Instrument.objects.order_by('pk')
         if pk:
             if int(pk)== 0:
-                form0 = InstrumentForm()
+                form = InstrumentForm()
+                form.pk=0
                 context = RequestContext(request, {
-                    'instruments': instruments, 'form0':form0 })
-                return render(request, 'w/index.html', context)
+                    'instruments': instruments, 'form':form })
+                return render(request, 'w/instrument.html', context)
             
             if int(pk)>0:
                 #print pk
@@ -201,54 +197,11 @@ def index(request, pk=None):
                 form.pk=int(pk)
                 context = RequestContext(request, {
                     'instruments': instruments, 'form':form })
-                return render(request, 'w/index.html', context)
+                return render(request, 'w/instrument.html', context)
 
         context = RequestContext(request, {
             'instruments': instruments })
-        return render(request, 'w/index.html', context)           
-        #if request.method == 'POST':
-        #    form = InstrumentForm(request.POST)
-            #form = InstrumentForm(request.POST, instance=instrument)
-        #    if form.is_valid():
-        #        form.save()
-                
-        #    context = RequestContext(request, {
-         #                                      'instruments': objects, 'list':list, 'form0':form0, 'form':form
-        #    })
-        #    return render(request, 'w/index.html', context)
-                #print 'frfrf'
-        #print error_message
-        #return render(request, 'w:index', {'form': form, 'instrument': instrument})
-        #form.pk=int(pk)
-    
-        #else:
-        #    form = InstrumentForm()
-    
-    #list = InstrumentList.as_view()
-    instruments = Instrument.objects.order_by('pk')
-    
-    #for object in objects:
-    #    object.fields = dict((field.name, field.value_to_string(object))
-    #    for field in object._meta.fields)
-
-    
-    form0 = InstrumentForm()
-    #context = RequestContext(request, {
-	#	'instruments': instruments, 'list':list, 'form0':form0, 'form':form
-	#})
-    context = RequestContext(request, {
-        'instruments': instruments, 'form0':form0, 'form':form
-    })
-
-    return render(request, 'w/index.html', context)
-	
-    for object in objects:
-		object.fields = dict((field.name, field.value_to_string(object))
-			for field in object._meta.fields)
-
-    template = loader.get_template('w/index.html')
-    return render_to_response(template, { 'objects':objects },
-		context_instance=RequestContext(request))
+        return render(request, 'w/instrument.html', context)           
 		
         
         
@@ -357,7 +310,7 @@ def instrumentAdd(request):
 	form = InstrumentCreate()
 	return render(request, 'w/instrument.html', {'form': form, 'instrument': instrument})
 	
-def instrument(request, instrument_id):
+def instrumentXXX(request, instrument_id):
 	
 	if int(instrument_id)>0:
 		instrument = Instrument.objects.get(pk=instrument_id)

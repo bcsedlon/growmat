@@ -1,48 +1,82 @@
-<html>
-<h1>{{ instrument.user_name }}</h1>
-<ul>
-{% for name, value in instrument.get_fields %}
-  {% if value %}
-    {{ name }} => {{ value }}
-  {% endif %}
-{% endfor %}
-</ul>
+{% extends 'w/base.html' %}
+{% block content %}
 
-<form action="{% url 'w:index' %}" method="get">
-{% csrf_token %}
-<input type="submit" name="back" value="BACK" /></td></tr>
-</form>
 
-<h1>{{ instrument.user_name }}</h1>
+ {% if not user.is_authenticated %}
+ <a href="{% url 'w:login' %}">Please login to edit data.</a>
+  {% else %}
+<a href="{% url 'w:instrument' 0 %}">Add Instrument</a> 
+ {% endif %}
 
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+
+
+{% if form %}
+	{% if form.errors %}<p><strong>{{ form.errors }}</strong></p>{% endif %}
+
+{% endif %}
 
 <table border=1>
+		<tr><th>ID</th><th>NAME</th><th>ADDRESS</th><th>TYPE</th><th>INDEX</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th><th>ARCHIVE</th></tr>
+		
+		{% if form.pk = 0 %}
+		<tr>
+		<form action="" method="post">{% csrf_token %}
+        	<td>NEW</td>
+            <td>{{ form.name }}</td>
+        	<td>{{ form.address }}</td>
+            <td>{{ form.type }}</td>
+            <td>{{ form.index }}</td>
+            <td>{{ form.value }}</td>
+            <td>{{ form.status }}</td>
+            <td></td>
+            <td><input type="submit" name="create" value="Create" /></td>
+            <td></td>
+            <td></td>
+        </form>
+        <tr>
+        {% endif %}
+                
+        {% for instrument in instruments %}
 
-
-<form action="{% url 'w:instrument' instrument.id %}" method="post">
-
-{% csrf_token %}
-{{ form.as_p }}
-<tr><td></td><td><input type="submit" name="save" value="SAVE" /></td></tr>
-<tr><td></td><td><input type="submit" name="copy" value="COPY" /></td></tr>
-<tr><td></td><td><input type="submit" name="delete" value="DELETE" /></td></tr>
-</form>
+        	{% if instrument.pk = form.pk %}
+        	
+        	<tr>
+        	<form action="" method="post">{% csrf_token %}
+            	<td>{{ form.pk }}</td>
+            	<td>{{ form.name }}</td>
+            	<td>{{ form.address }}</td>
+            	<td>{{ form.type }}</td>
+            	<td>{{ form.index }}</td>
+                <td>{{ form.value }}</td>
+                <td>{{ form.status }}</td>
+            	<td></td>
+            	<td><input type="submit" name="save" value="Save" /></td>
+            	<td></td>
+            	<td></td>
+            </form>
+            <tr>
+        	{% else %}
+            <tr>
+            	<td>{{ instrument.id }}</td>
+            	<td>{{ instrument.name }}</td>
+            	<td>{{ instrument.address }}</td>
+            	<td>{{ instrument.get_type_display }}</td>
+            	<td>{{ instrument.index }}</td>
+               	<td>{{ instrument.value }} </td>
+            	<td>{{ instrument.status }} </td>
+            	<td>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} </td>
+            	<td>{% if user.is_authenticated %}<a href="{% url 'w:instrument' instrument.id %}">Update</a>{% endif %}</td>
+            	<td>{% if user.is_authenticated %}<a href="{% url 'w:instrument_delete' instrument.id %}">Delete</a>{% endif %}</td>
+            	<td><a href="{% url 'w:archive' instrument.id %}">Archive</a></td>
+            	 
+            <tr>
+            {% endif %}
+        {% endfor %}
+        
+        
+        
+    
 </table>
 
-
-{% comment %}
-<table border=1>
-<form>
-{% csrf_token %}
-{% for name, value in instrument.get_fields %}
-  {% if value %}
-    <tr><td>{{name}}</td><td><input type="text" name="{{ name }}" value="{{ value }}"></td></tr>
-  {% endif %}
-{% endfor %}
-</form>
-</table>
-{% endcomment %}
-
-
-</html>
+{% endblock %} 

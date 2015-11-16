@@ -1,12 +1,14 @@
 <html>
 	<head>
 		<title>GROWMAT</title>
+		
     </head>
 
 	<body>
    		<h3>
+   			<a href="{% url 'w:index' %}">User view</a>
 			{% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
-			<a href="{% url 'w:index' %}">Instruments</a>
+			<a href="{% url 'w:instrument' %}">Instruments</a>
 			<a href="{% url 'w:period' %}">Periods</a>
 			<a href="{% url 'w:rule' %}">Rules</a>
 			<a href="{% url 'w:archive' %}">Archives</a>
