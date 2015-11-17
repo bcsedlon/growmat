@@ -144,18 +144,18 @@ def detail(request, pk=None):
             if 'setOff' in request.POST:
                 value = 0
             if 'setOn' in request.POST:
-                value = 0
+                value = 1
             instrument.value = value
             instrument.datetime = timezone.now()
             instrument.status = 0 #instrument.status & ~ 3
             instrument.manual = True
             instrument.save()        
-    
+        return HttpResponseRedirect('/w/')
     
     #instrument = Instrument.objects.get(pk=pk)
     form = InstrumentForm(instance = instrument)
     context = RequestContext(request, {
-            'instrument': instrument, 'form':form })
+        'instrument': instrument, 'form':form })
     return render(request, 'w/detail.html', context)
 	
 def instrument(request, pk=None):

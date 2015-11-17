@@ -10,7 +10,8 @@ tr.W {
 tr.A {
     background-color: red;
 }
-
+tr a{width:100%; display:block; color: black; text-decoration: none;}
+tr a:hover{color: blue}
 
 
 td a{width:100%; display:block; color: black; text-decoration: none;}
@@ -45,13 +46,10 @@ td.A {
     background-color: red;
 }
 
-table.detail td 
-{
-	width: 33%;	
-}
+
 
 input.touch
 {
-	width: 75px;
-	height: 75px;
+	width: 100px;
+	height: 100px;
 }

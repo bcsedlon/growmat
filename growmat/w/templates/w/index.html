@@ -1,6 +1,9 @@
 {% load staticfiles %}
 <html>
 	<head>
+	
+		<meta name="viewport" content="width=device-width">
+	
 		<title>GROWMAT</title>
 		<meta http-equiv="refresh" content="5">
 		<link rel="stylesheet" type="text/css" href="{% static 'w/style.css' %}">
@@ -36,7 +39,7 @@
 {% endblock %}
 {% endcomment %}
 
-<table border=0 style="border-spacing: 10px;">
+<table border=0>
 		
         {% for instrument in instruments %}
 			{% cycle '<tr>' '' '' %}

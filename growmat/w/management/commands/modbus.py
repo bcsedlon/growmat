@@ -124,7 +124,7 @@ def modbus_read(instrument, s):
             #print 'do db'			
             #dinstrument.data_value = int(TEMP0)
             #print 
-            instrument.status = instrument.status & ~Instrument.NT
+            instrument.status = instrument.status & ~Instrument.cNT
             
             station.address = instrument.address
             #print station.address
@@ -135,10 +135,10 @@ def modbus_read(instrument, s):
                 value = station.read_register(instrument.type + instrument.index, 0)
                 
             if value == 0:#sys.maxint:
-                instrument.status = instrument.status | Instrument.IV
+                instrument.status = instrument.status | Instrument.cIV
                 
             else:   
-                instrument.status = instrument.status & ~Instrument.IV         
+                instrument.status = instrument.status & ~Instrument.cIV         
                 #instrument.value = value / 1000 #minimalmodbus._bytestringToFloat(registerstring)
                 instrument.value = float(value) * 0.01
             
@@ -148,7 +148,7 @@ def modbus_read(instrument, s):
             instrument.save()
         except:
             instrument.datetime = timezone.now()
-            instrument.status = instrument.status | Instrument.NT
+            instrument.status = instrument.status | Instrument.cNT
             instrument.save()
             #print 'sensor n/a'
             #s.stdout.write('sensor does not response, address {}'.format(instrument.address))
@@ -176,19 +176,20 @@ class Command(BaseCommand):
             #self.stdout.write('There are {} things!'.format(instruments.count()))
             #print "->"
             for instrument in instruments:
-                #print "-->"
-                #self.stdout.write('reading address {}'.format(instrument.address))
-                #self.stdout.write('reading index {}'.format(instrument.type + instrument.index))
-                if instrument.address > 0:
-                    modbus_read(instrument,self)
-                    #time.sleep(0.5)
-                    #self.stdout.write('status {}'.format(instrument.status))
-                if instrument.address == 0:
-                    if instrument.type == 0:
-                        if instrument.index == 0:
-                            #instrument.value = int(time.time())
-                            instrument.value = int(strftime("1%H%M%S", gmtime()))
-                            instrument.save()
+                if instrument.manual == False:
+                    #print "-->"
+                    #self.stdout.write('reading address {}'.format(instrument.address))
+                    #self.stdout.write('reading index {}'.format(instrument.type + instrument.index))
+                    if instrument.address > 0:
+                        modbus_read(instrument,self)
+                        #time.sleep(0.5)
+                        #self.stdout.write('status {}'.format(instrument.status))
+                    if instrument.address == 0:
+                        if instrument.type == 0:
+                            if instrument.index == 0:
+                                #instrument.value = int(time.time())
+                                instrument.value = int(strftime("1%H%M%S", gmtime()))
+                                instrument.save()
             
             
             
@@ -376,7 +377,7 @@ class Command(BaseCommand):
                 if rule.result != rule.result0:
                     rule.result0 = rule.result
                     rule.datetime = timezone.now()
-                    rule.status = rule.status & ~1
+                    rule.output.status = rule.output.status & ~1
                     rule.save()
                     
                     fn =  '/home/pi/growmat/growmat/ramdisk/0.csv'
