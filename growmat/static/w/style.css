@@ -12,22 +12,46 @@ tr.A {
 }
 
 
+
+td a{width:100%; display:block; color: black; text-decoration: none;}
+td a:hover{color: blue}
 td.normal {
+	border: 2px solid black;
+	width: 33%;
     text-align: center;
 }
 td.NT {
+	border: 2px solid black;
+	width: 33%;
     text-align: center;
     background-color: gray;
 }
 td.IV {
+	border: 2px solid black;
+	width: 33%;
     text-align: center;
     background-color: gray;
 }
 td.W {
+	border: 2px solid black;
+	width: 33%;
     text-align: center;
     background-color: yellow;
 }
 td.A {
+	border: 2px solid black;
+	width: 33%;
     text-align: center;
     background-color: red;
+}
+
+table.detail td 
+{
+	width: 33%;	
+}
+
+input.touch
+{
+	width: 75px;
+	height: 75px;
 }

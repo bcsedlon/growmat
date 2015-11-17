@@ -17,12 +17,14 @@
 {% endif %}
 
 <table border=1>
-		<tr><th>ID</th><th>NAME</th><th>ADDRESS</th><th>TYPE</th><th>INDEX</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th><th>ARCHIVE</th></tr>
+		<tr><th>ID</th><th>PRI</th><th>MANUAL</th><th>NAME</th><th>ADDRESS</th><th>TYPE</th><th>INDEX</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th><th>ARCHIVE</th></tr>
 		
 		{% if form.pk = 0 %}
 		<tr>
 		<form action="" method="post">{% csrf_token %}
         	<td>NEW</td>
+        	<td>{{ form.priority }}</td>
+        	<td>{{ form.manual }}</td>
             <td>{{ form.name }}</td>
         	<td>{{ form.address }}</td>
             <td>{{ form.type }}</td>
@@ -44,6 +46,8 @@
         	<tr>
         	<form action="" method="post">{% csrf_token %}
             	<td>{{ form.pk }}</td>
+            	<td>{{ form.priority }}</td>
+        	    <td>{{ form.manual }}</td>
             	<td>{{ form.name }}</td>
             	<td>{{ form.address }}</td>
             	<td>{{ form.type }}</td>
@@ -59,6 +63,8 @@
         	{% else %}
             <tr>
             	<td>{{ instrument.id }}</td>
+            	<td>{{ instrument.priority }}</td>
+            	<td>{{ instrument.manual }}</td>
             	<td>{{ instrument.name }}</td>
             	<td>{{ instrument.address }}</td>
             	<td>{{ instrument.get_type_display }}</td>

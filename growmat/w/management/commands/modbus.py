@@ -376,6 +376,7 @@ class Command(BaseCommand):
                 if rule.result != rule.result0:
                     rule.result0 = rule.result
                     rule.datetime = timezone.now()
+                    rule.status = rule.status & ~1
                     rule.save()
                     
                     fn =  '/home/pi/growmat/growmat/ramdisk/0.csv'
@@ -386,6 +387,8 @@ class Command(BaseCommand):
                     f.write(dateformat.format(rule.datetime,  'Y-m-d H:i:s'))
                     f.write(';')
                     f.write(str(rule.result))
+                    f.write(';')
+                    f.write(rule.description)
                     f.write(';')
                     f.write('\n')
                     f.close()

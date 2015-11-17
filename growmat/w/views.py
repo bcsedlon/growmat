@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.template import RequestContext, loader
 from django.core.urlresolvers import reverse
 from django.core.urlresolvers import reverse_lazy
-
+from django.utils import timezone
 
  
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
@@ -123,10 +123,40 @@ def webcam(request, pk=None):
 	return render(request, 'w/webcam.html')
 
 def index(request):
-    instruments = Instrument.objects.order_by('pk')
+    instruments = Instrument.objects.order_by('priority')
     context = RequestContext(request, {
             'instruments': instruments })
     return render(request, 'w/index.html', context)        
+
+def detail(request, pk=None):
+    instrument = Instrument.objects.get(pk=pk)
+    if request.method == 'POST':
+        if 'resetManual' in request.POST:
+            instrument.manual = False
+            #instrument.status = instrument.status | 1
+            instrument.save()
+        else:
+        
+            form = InstrumentForm(request.POST)
+            value = instrument.value
+            if 'setValue' in request.POST:
+                value = form.data['value']
+            if 'setOff' in request.POST:
+                value = 0
+            if 'setOn' in request.POST:
+                value = 0
+            instrument.value = value
+            instrument.datetime = timezone.now()
+            instrument.status = 0 #instrument.status & ~ 3
+            instrument.manual = True
+            instrument.save()        
+    
+    
+    #instrument = Instrument.objects.get(pk=pk)
+    form = InstrumentForm(instance = instrument)
+    context = RequestContext(request, {
+            'instrument': instrument, 'form':form })
+    return render(request, 'w/detail.html', context)
 	
 def instrument(request, pk=None):
     form = InstrumentForm()

@@ -11,10 +11,10 @@ from django.core.urlresolvers import reverse
 class Instrument(models.Model):
 	
 	#INI = 1 << 0
-	NT = 1<<0
-	IV = 1<<1
-	W  = 1<<2
-	A  = 1<<3
+	cNT = 1<<0
+	cIV = 1<<1
+	cA  = 1<<2
+	cW  = 1<<3
 	
 	INSTRUMENT_TYPE = (
 					(0, 'SYSTEM'),
@@ -38,6 +38,9 @@ class Instrument(models.Model):
     				(9, '9'),
 	)
 	
+		
+	priority = models.FloatField(default=0, blank=True)
+	manual = models.BooleanField(default=False, blank=True)
 	address = models.IntegerField(default=0)
 	type = models.IntegerField(choices=INSTRUMENT_TYPE, default=0)
 	#index = models.IntegerField(choices=INSTRUMENT_INDEX, default=0)
@@ -52,10 +55,21 @@ class Instrument(models.Model):
 	def get_fields(self):
 		return [(field.name, field.value_to_string(self)) for field in Instrument._meta.fields]
 	
+	def NT(self):
+		return self.status & Instrument.cNT
+	def IV(self):
+		return self.status & Instrument.cIV
+	def A(self):
+		return self.status & Instrument.cA
+	def W(self):
+		return self.status & Instrument.cW
+	
+	
+	
 class InstrumentForm(ModelForm):
     class Meta:
         model = Instrument
-        fields = ['address', 'type', 'index', 'name', 'value', 'status', 'datetime']
+        fields = ['priority', 'manual', 'address', 'type', 'index', 'name', 'value', 'status', 'datetime']
 
 
 class InstrumentList(ListView):

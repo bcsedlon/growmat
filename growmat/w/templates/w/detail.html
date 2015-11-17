@@ -11,6 +11,7 @@
 <a href="{% url 'w:index' %}">GROWMAT</a>
 <a href="{% url 'w:instrument' %}">System administration</a>
 </h3>
+
 {% comment %}
 {% block content %}
 
@@ -36,8 +37,20 @@
 {% endblock %}
 {% endcomment %}
 
-<table border=0 style="border-spacing: 10px;">
-		
+<table>
+	<tr><td>NAME</td><td>{{ instrument.name }}</td><td></td></tr>
+	<tr><td>STATUS</td><td>{{ instrument.status }}</td><td></td></tr>
+	<tr><td>DATETIME</td><td>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} </td><td></td></tr>
+	
+	<form action="" method="post">{% csrf_token %}
+		<tr><td>VALUE</td><td>{{ form.value }}</td><td><input type="submit" name="setValue" value="Set" class="touch"/></td></tr>
+    	<tr><td></td><td>Off</td><td><input type="submit" name="setOff" value="Off" class="touch"/></td></tr>
+    	<tr><td></td><td>On</td><td><input type="submit" name="setOn" value="On" class="touch" /></td></tr>
+    	<tr><td>MANUAL</td><td>{{ instrument.manual }}</td><td><input type="submit" name="resetManual" value="Reset" class="touch"/></td></tr>
+	</form>
+	
+	
+{% comment %}	
         {% for instrument in instruments %}
 			{% cycle '<tr>' '' '' %}
 			{% if instrument.NT %}
@@ -52,7 +65,7 @@
         		<td class="normal">
         	{% endif %}
             	{% if user.is_authenticated %}
-            		<a href="{% url 'w:detail' instrument.id %}"
+            		<a href="{% url 'w:instrument' instrument.id %}"
             	{% else %}
             		<a href="{% url 'w:login' %}"
             	{% endif %}
@@ -68,6 +81,8 @@
             </td>
             {% cycle '' '' '</tr>' %}
         {% endfor %}
+ {% endcomment %}
+ 
  </table>
 
 
