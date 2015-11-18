@@ -188,7 +188,8 @@ class Command(BaseCommand):
                         if instrument.type == 0:
                             if instrument.index == 0:
                                 #instrument.value = int(time.time())
-                                instrument.value = int(strftime("1%H%M%S", gmtime()))
+                                #instrument.value = int(strftime("1%H%M%S", gmtime()))
+                                instrument.value = int(strftime("1%H%M%S", timezone.now()))
                                 instrument.save()
             
             

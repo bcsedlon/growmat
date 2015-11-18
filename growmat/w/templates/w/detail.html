@@ -8,6 +8,8 @@
 
 <body>
 <h3>
+{% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
+<br>
 <a href="{% url 'w:index' %}">GROWMAT</a>
 <a href="{% url 'w:instrument' %}">System administration</a>
 </h3>
@@ -38,15 +40,42 @@
 {% endcomment %}
 
 <table>
-	<tr><td>NAME</td><td>{{ instrument.name }}</td><td></td></tr>
-	<tr><td>STATUS</td><td>{{ instrument.status }}</td><td></td></tr>
-	<tr><td>DATETIME</td><td>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} </td><td></td></tr>
+	<tr><td class="normal">NAME<br><big>{{ instrument.name }}</big></td></tr>
+	<tr>
+	{% if instrument.NT %}
+        		<td class="NT">
+        	{% elif instrument.IV %}
+        		<td class="IV">
+        	{% elif instrument.W %}
+        		<td class="W">
+        	{% elif instrument.A %}
+        		<td class="A">
+        	{% else %}
+        		<td class="normal">
+    {% endif %}
+	STATUS<br><big>{{ instrument.status }}</big></td></tr>
+	<tr><td class="normal">DATETIME<br><big>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} </big></td></tr>
+	
 	
 	<form action="" method="post">{% csrf_token %}
-		<tr><td>VALUE</td><td>{{ form.value }}</td><td><input type="submit" name="setValue" value="Set" class="touch"/></td></tr>
-    	<tr><td></td><td>Off</td><td><input type="submit" name="setOff" value="Off" class="touch"/></td></tr>
-    	<tr><td></td><td>On</td><td><input type="submit" name="setOn" value="On" class="touch" /></td></tr>
-    	<tr><td>MANUAL</td><td>{{ instrument.manual }}</td><td><input type="submit" name="resetManual" value="Reset" class="touch"/></td></tr>
+		<tr>
+		<td class="normal">
+			VALUE<br>
+				{{ form.value }}
+				<br><br>&nbsp;
+					<input type="submit" name="setValue" value="Set" class="touch"/>&nbsp;&nbsp;
+    				<input type="submit" name="setOff" value="Off" class="touch"/>&nbsp;&nbsp;
+    	    		<input type="submit" name="setOn" value="On" class="touch" />&nbsp;
+    		<br><br>	
+    	</td>
+    	</tr>
+    	<tr>
+    		<td class="normal">
+    			
+    			MANUAL<br><big>{{ instrument.manual }}<big><br><input type="submit" name="resetManual" value="Reset" class="touch"/>
+    			<br><br>
+    		</td>
+    	</tr>
 	</form>
 	
 	

@@ -11,7 +11,12 @@
 
 <body>
 <h3>
+{% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
+<br>
+
 <a href="{% url 'w:index' %}">GROWMAT</a>
+
+
 <a href="{% url 'w:instrument' %}">System administration</a>
 </h3>
 {% comment %}
@@ -59,9 +64,10 @@
             	{% else %}
             		<a href="{% url 'w:login' %}"
             	{% endif %}
-            	<h3>{{ instrument.name }}</h3>
-           
-            	<h1>{{ instrument.value }}</h1>
+            	<big>{{ instrument.name }}</big>
+ 				<br>          
+            	<big>{{ instrument.value }}</big>
+            	<br>
             	({{ instrument.status }})
             	{% if instrument.manual %}
             		MANUAL

@@ -17,31 +17,31 @@ tr a:hover{color: blue}
 td a{width:100%; display:block; color: black; text-decoration: none;}
 td a:hover{color: blue}
 td.normal {
-	border: 2px solid black;
-	width: 33%;
+	border: 1px solid black;
+
     text-align: center;
 }
 td.NT {
-	border: 2px solid black;
-	width: 33%;
+	border: 1px solid black;
+
     text-align: center;
     background-color: gray;
 }
 td.IV {
-	border: 2px solid black;
-	width: 33%;
+	border: 1px solid black;
+
     text-align: center;
     background-color: gray;
 }
 td.W {
-	border: 2px solid black;
-	width: 33%;
+	border: 1px solid black;
+
     text-align: center;
     background-color: yellow;
 }
 td.A {
-	border: 2px solid black;
-	width: 33%;
+	border: 1px solid black;
+
     text-align: center;
     background-color: red;
 }
