@@ -7,13 +7,16 @@
     </head>
 
 <body>
+
+{% comment %}
 <h3>
 {% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
 <br>
 <a href="{% url 'w:index' %}">GROWMAT</a>
-<a href="{% url 'w:instrument' %}">System administration</a>
+<a href="{% url 'w:instrument' %}">System</a>
 </h3>
-
+<hr>
+{% endcomment %}
 {% comment %}
 {% block content %}
 
@@ -37,10 +40,9 @@
         {% endfor %}
  </table>
 {% endblock %}
-{% endcomment %}
+
 
 <table>
-	<tr><td class="normal">NAME<br><big>{{ instrument.name }}</big></td></tr>
 	<tr>
 	{% if instrument.NT %}
         		<td class="NT">
@@ -53,33 +55,53 @@
         	{% else %}
         		<td class="normal">
     {% endif %}
-	STATUS<br><big>{{ instrument.status }}</big></td></tr>
-	<tr><td class="normal">DATETIME<br><big>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} </big></td></tr>
+	{% endcomment %}
+	
+	
+	NAME <h3>{{ instrument.name }}</h3>
+	<hr>
+	
+	DATETIME (STATUS) <h3>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} ({{ instrument.status }}) </h3>
+	<hr>
+	
 	
 	
 	<form action="" method="post">{% csrf_token %}
-		<tr>
-		<td class="normal">
-			VALUE<br>
+		
+			VALUE
+			<h3>
 				{{ form.value }}
-				<br><br>&nbsp;
-					<input type="submit" name="setValue" value="Set" class="touch"/>&nbsp;&nbsp;
-    				<input type="submit" name="setOff" value="Off" class="touch"/>&nbsp;&nbsp;
-    	    		<input type="submit" name="setOn" value="On" class="touch" />&nbsp;
-    		<br><br>	
+			</h3>&nbsp;
+					<input type="submit" name="setValue" value="Set" class="touch"/>
+    				<input type="submit" name="setOff" value="Off" class="touch"/>
+    	    		<input type="submit" name="setOn" value="On" class="touch" />
+					&nbsp;
+    		
+			<hr>
+    		<table>
+			<tr><td class="normal" style="width: 100px;">
+    			<a href="{% url 'w:index' %}">Back</a>
+				</td>
+				<td align="center">
+    			<input type="submit" name="resetManual" value="Auto" class="touch" 
+				{% if not instrument.manual %}
+					disabled
+				{% endif %}
+				/>
+				</td>
+				<td class="normal" style="width: 100px;">
+    			<a href="{% url 'w:detail' instrument.id %}">Refresh</a>
+				</td>
+			</tr>
+			</table>
+		</form>
+  {% comment %}  			
     	</td>
     	</tr>
-    	<tr>
-    		<td class="normal">
-    			
-    			MANUAL<br><big>{{ instrument.manual }}<big><br><input type="submit" name="resetManual" value="Reset" class="touch"/>
-    			<br><br>
-    		</td>
-    	</tr>
-	</form>
 	
 	
-{% comment %}	
+	
+	
         {% for instrument in instruments %}
 			{% cycle '<tr>' '' '' %}
 			{% if instrument.NT %}
@@ -110,10 +132,10 @@
             </td>
             {% cycle '' '' '</tr>' %}
         {% endfor %}
- {% endcomment %}
+
  
  </table>
-
+ {% endcomment %}
 
 
 

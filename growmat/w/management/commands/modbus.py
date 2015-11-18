@@ -188,8 +188,9 @@ class Command(BaseCommand):
                         if instrument.type == 0:
                             if instrument.index == 0:
                                 #instrument.value = int(time.time())
-                                #instrument.value = int(strftime("1%H%M%S", gmtime()))
-                                instrument.value = int(strftime("1%H%M%S", timezone.now()))
+                                instrument.value = int(strftime("%H%M%S", gmtime()))
+                                #instrument.value = int(strftime("1%H%M%S", timezone.now()))
+                                #instrument.value = float(timezone.now()|time:"His")
                                 instrument.save()
             
             
