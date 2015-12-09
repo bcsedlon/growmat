@@ -206,7 +206,7 @@ void loop()
 digitalWrite(LED, LOW);
 }
 
-if(i++ > 1000digitalWrite(LED, LOW);000) 
+if(i++ > 1000000) 
 {
   i = 0;
 }
