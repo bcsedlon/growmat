@@ -61,10 +61,14 @@ class PeriodDelete(DeleteView):
     model = Period
     success_url = reverse_lazy('w:period/0')
 
+PROJECT_PATH = os.path.dirname(settings.BASE_DIR)
 # Create your views here.
 def save(request):
     os.system('sync')
-    shutil.copy2('/home/pi/growmat/growmat/ramdisk/db.sqlite3', '/home/pi/growmat/db.sqlite3' )
+    
+    os.path.join(PROJECT_PATH,'growmat', 'ramdisk', 'db.sqlite3')
+    shutil.copy2( os.path.join(PROJECT_PATH,'growmat', 'ramdisk', 'db.sqlite3'),  os.path.join(PROJECT_PATH, 'db.sqlite3') )
+    #shutil.copy2('/home/pi/growmat/growmat/ramdisk/db.sqlite3', '/home/pi/growmat/db.sqlite3' )
     
     context = RequestContext(request, {
             'message': 'Database saved!' })
@@ -73,9 +77,14 @@ def save(request):
 
 def archive(request, pk=0):
     
-    os.system('/home/pi/growmat/garchive')
+    #os.system('/home/pi/growmat/garchive')
+    import management.commands.archive
     
-    path = '/home/pi/growmat/archives/' + str(pk) 
+    management.commands.archive.appendArchives()
+    
+    #path = '/home/pi/growmat/archives/' + str(pk) 
+    path = os.path.join(PROJECT_PATH,'growmat', 'archives', str(pk), '')
+    print path
     #if pk is None:
     #    pk = '*'
     

@@ -113,7 +113,18 @@ STATIC_URL = '/static/'
 # sev
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
-    '/home/pi/growmat/archives/',
+    os.path.join(BASE_DIR, 'archives'),
+    os.path.join(BASE_DIR, 'archives', '0'),
+    os.path.join(BASE_DIR, 'archives', '1'),
+    os.path.join(BASE_DIR, 'archives', '2'),
+    os.path.join(BASE_DIR, 'archives', '3'),
+    os.path.join(BASE_DIR, 'archives', '4'),
+    os.path.join(BASE_DIR, 'archives', '5'),
+    os.path.join(BASE_DIR, 'archives', '6'),
+    os.path.join(BASE_DIR, 'archives', '7'),
+    os.path.join(BASE_DIR, 'archives', '8'),
+    os.path.join(BASE_DIR, 'archives', '9'),
+   
 ]
 
 DBBACKUP_BACKUP_DIRECTORY = '/home/pi/growmat/'

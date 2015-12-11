@@ -7,8 +7,12 @@ import time
 from time import gmtime, strftime
 from django.utils import timezone
 from django.utils import dateformat
-import sys
+from django.conf import settings
 
+import sys
+import urllib, re
+
+import ConfigParser
 #print Archive.objects.raw('DELETE FROM w_archive WHERE 1')
 
 #from django.db import connection
@@ -17,14 +21,16 @@ import sys
 #connection.commit()
 #print '...'
 
-import smbus
-
-
-
+i2c=None
 # i2c address of PCF8574
 PCF8574=0x20
+try:
+    import smbus
+    i2c=smbus.SMBus(1)
+except:
+    print 'WARNING: I2C interface is not available!'
 # open the bus (0 -- original Pi, 1 -- Rev 2 Pi)
-i2c=smbus.SMBus(1)
+
 
 #import xmpp
 
@@ -62,9 +68,12 @@ import urllib
 import urllib2
 
 def get_external_ip():
-    site = urllib.urlopen("http://checkip.dyndns.org/").read()
-    grab = re.findall('([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', site)
-    address = grab[0]
+    try:
+        site = urllib.urlopen("http://checkip.dyndns.org/").read()
+        grab = re.findall('([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)', site)
+        address = grab[0]
+    except:
+        address = '0.0.0.0'    
     return address
 
 #try:
@@ -74,7 +83,8 @@ def get_external_ip():
 #except Error:
 #    ext_ip = '0.0.0.0'
     
-call(['python', '/home/pi/growmat/xsend.py' ,'growmat@jabbim.cz', 'GROWMAT'])
+
+#call(['python', '/home/pi/growmat/xsend.py' ,'growmat@jabbim.cz', 'GROWMAT'])
 
 #import subprocess
 from django.utils import timezone
@@ -82,16 +92,15 @@ from django.utils import timezone
 import minimalmodbus
 #print minimalmodbus.__file__
 
-station = minimalmodbus.Instrument('/dev/ttyAMA0', 1) # port name, slave address (in decimal)
-
-print station.serial.port          # this is the serial port name
-#station.debug = True
-station.serial.baudrate = 9600   # Baud
-station.serial.bytesize = 8
-#station.serial.parity   = serial.PARITY_NONE
-station.serial.stopbits = 2
-station.serial.timeout  = 0.05   # seconds
-station.serial.timeout  = 0.5   # seconds
+#station = minimalmodbus.Instrument('/dev/ttyAMA0', 1) # port name, slave address (in decimal)
+#print station.serial.port          # this is the serial port name
+##station.debug = True
+#station.serial.baudrate = 9600   # Baud
+#station.serial.bytesize = 8
+##station.serial.parity   = serial.PARITY_NONE
+#station.serial.stopbits = 2
+#station.serial.timeout  = 0.05   # seconds
+#station.serial.timeout  = 0.5   # seconds
 
 #instrument2 = minimalmodbus.Instrument('/dev/ttyAMA0', 2) # port name, slave address (in decimal)
 #print instrument2.serial.port          # this is the serial port name
@@ -106,7 +115,7 @@ station.serial.timeout  = 0.5   # seconds
 #HIND0 = 0
 #subprocess.Popen(["python", "archive.py"])
 
-def modbus_read(instrument, s):
+def modbus_read(station, instrument, s):
         #dinstrument = Instrument.objects.get(pk=9)
 		#instrument.address, instrument.type + instrument.index)
                 
@@ -167,7 +176,50 @@ class Command(BaseCommand):
     help = 'Does some magical work'
 
     def handle(self, *args, **options):
-        """ Do your work here """
+        
+        print 'GROWMAT modbus'
+        #PROJECT_PATH = os.path.normpath(os.path.join(PROJECT_PATH, '..'))
+        #print PROJECT_PATH
+        PROJECT_PATH = os.path.dirname(settings.BASE_DIR)
+        
+        text = 'GROWMAT IP: ' + get_external_ip()
+        #text = 'GROWMAT'
+        print text
+        call(['python', os.path.join(PROJECT_PATH, 'xsend.py') ,'growmat@jabbim.cz', text])
+
+        Config = ConfigParser.ConfigParser()
+        try:
+            Config.read(os.path.join(PROJECT_PATH, 'growmat.ini'))
+            port = Config.get('modbus', 'port')
+            debug = Config.get('modbus', 'debug')
+        except:
+            cfgfile = open(os.path.join(PROJECT_PATH, 'growmat.ini'),'w+')
+            # add the settings to the structure of the file, and lets write it out...
+            Config.add_section('modbus')
+            Config.set('modbus','port','/dev/ttyAMA0')
+            Config.set('modbus','debug','False')
+            
+            Config.write(cfgfile)
+            cfgfile.close()
+            print 'Please check growmat.ini and try again!'
+            return
+        
+        station = minimalmodbus.Instrument(port, 1)#'/dev/ttyAMA0', 1) # port name, slave address (in decimal)
+
+        print station.serial.port          # this is the serial port name
+        #station.debug = True
+        if debug == 'True':
+            station.debug = True
+        #print debug
+        #print station.debug 
+        
+        station.serial.baudrate = 9600   # Baud
+        station.serial.bytesize = 8
+        #station.serial.parity   = serial.PARITY_NONE
+        station.serial.stopbits = 2
+        station.serial.timeout  = 0.05   # seconds
+        station.serial.timeout  = 0.5   # seconds
+
         
         while 1:
             time_now = int(strftime("1%H%M%S", gmtime()))
@@ -181,7 +233,7 @@ class Command(BaseCommand):
                     #self.stdout.write('reading address {}'.format(instrument.address))
                     #self.stdout.write('reading index {}'.format(instrument.type + instrument.index))
                     if instrument.address > 0:
-                        modbus_read(instrument,self)
+                        modbus_read(station, instrument,self)
                         #time.sleep(0.5)
                         #self.stdout.write('status {}'.format(instrument.status))
                     if instrument.address == 0:
@@ -436,6 +488,6 @@ class Command(BaseCommand):
                         PCF8574OutputValue = PCF8574OutputValue | (1 << instrument.index)
                     #print PCF8574OutputValue
                 
-                
-            i2c.write_byte(PCF8574, PCF8574OutputValue)	
+            if i2c is not None:    
+                i2c.write_byte(PCF8574, PCF8574OutputValue)	
             time.sleep(5)

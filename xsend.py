@@ -10,18 +10,21 @@ tojid=sys.argv[1]
 text=' '.join(sys.argv[2:])
 
 jidparams={}
+
+PATH = os.path.dirname(__file__)
+ 
 #if os.access(os.environ['HOME']+'/.xsend',os.R_OK):
-if os.access('/home/pi/growmat/.xsend',os.R_OK):
+if os.access(os.path.join(PATH, '.xsend'), os.R_OK):
     #for ln in open(os.environ['HOME']+'/.xsend').readlines():
-    for ln in open('/home/pi/growmat/.xsend').readlines():
+    for ln in open(os.path.join(PATH, '.xsend')).readlines():
         if not ln[0] in ('#',';'):
             key,val=ln.strip().split('=',1)
             jidparams[key.lower()]=val
 for mandatory in ['jid','password']:
     if mandatory not in jidparams.keys():
         #open(os.environ['HOME']+'/.xsend','w').write('#Uncomment fields before use and type in correct credentials.\n#JID=romeo@montague.net/resource (/resource is optional)\n#PASSWORD=juliet\n')
-        open('/home/pi/growmat/.xsend','w').write('#Uncomment fields before use and type in correct credentials.\n#JID=romeo@montague.net/resource (/resource is optional)\n#PASSWORD=juliet\n')
-        print 'Please point ~/growmat/.xsend config file to valid JID for sending messages.'
+        open(os.path.join(PATH, '.xsend'),'w').write('#Uncomment fields before use and type in correct credentials.\n#JID=romeo@montague.net/resource (/resource is optional)\n#PASSWORD=juliet\n')
+        print 'Please point ' + os.path.join(PATH, '.xsend') + ' config file to valid JID for sending messages.'
         sys.exit(0)
 
 jid=xmpp.protocol.JID(jidparams['jid'])
