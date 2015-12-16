@@ -16,7 +16,7 @@
 
 
 <table border=1>
-		<tr><th>ID</th><th>PRI</th><th>PERIOD</th><th>INPUT</th><th>INPUT ATTRIBUTE</th><th>OPERATION</th><th>INPUT PARAMETER</th><th>OUTPUT</th><th>OUTPUT ATTRIBUTE</th><th>ACTION</th><th>OUTPUT PARAMETER</th><th>DESCRIPTION</th><th>RESULT</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th></tr>
+		<tr><th>ID</th><th>PRI</th><th>PERIOD</th><th>INPUT</th><th>INPUT ATTRIBUTE</th><th>INPUT OPERATION</th><th>INPUT PARAMETER</th><th>OUTPUT</th><th>OUTPUT ATTRIBUTE</th><th>OUTPUT ACTION TRUE</th><th>OUTPUT PARAMETER TRUE</th><th>OUTPUT ACTION FALSE</th><th>OUTPUT PARAMETER FALSE</th><th>DESCRIPTION</th><th>RESULT</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th></tr>
 		{% if form.pk = 0 %}
 		
 		
@@ -27,12 +27,14 @@
         	<td>{{ form.period }}</td>
             <td>{{ form.input }}</td>
             <td>{{ form.input_attribute }}</td>
-        	<td>{{ form.operation }}</td>
+        	<td>{{ form.input_operation }}</td>
             <td>{{ form.input_parameter }}</td>
             <td>{{ form.output }}</td>
             <td>{{ form.output_attribute }}</td>
-            <td>{{ form.action }}</td>
-            <td>{{ form.output_parameter }}</td>
+            <td>{{ form.output_action_true }}</td>
+            <td>{{ form.output_parameter_true }}</td>
+            <td>{{ form.output_action_false }}</td>
+            <td>{{ form.output_parameter_false }}</td>
             <td>{{ form.description }}</td>
 			<td></td>
             <td></td>
@@ -53,12 +55,14 @@
             	<td>{{ form.period }}</td>
             	<td>{{ form.input }}</td>
             	<td>{{ form.input_attribute }}</td>
-        		<td>{{ form.operation }}</td>
+        		<td>{{ form.input_operation }}</td>
             	<td>{{ form.input_parameter }}</td>
             	<td>{{ form.output }}</td>
             	<td>{{ form.output_attribute }}</td>
-            	<td>{{ form.action }}</td>
-            	<td>{{ form.output_parameter }}</td>
+            	<td>{{ form.output_action_true }}</td>
+            	<td>{{ form.output_parameter_true }}</td>
+            	<td>{{ form.output_action_false }}</td>
+            	<td>{{ form.output_parameter_false }}</td>
             	<td>{{ form.description }}</td>
 				<td></td>
             	<td></td>
@@ -73,12 +77,14 @@
              	<td>{{ rule.period.name }}</td>
             	<td>{{ rule.input.name }}</td>
         		<td>{{ rule.get_input_attribute_display }}</td>
-        		<td>{{ rule.get_operation_display }}</td>
+        		<td>{{ rule.get_input_operation_display }}</td>
             	<td>{{ rule.input_parameter }}</td>
             	<td>{{ rule.output.name }}</td>
             	<td>{{ rule.get_output_attribute_display }}</td>
-            	<td>{{ rule.get_action_display }}</td>
-            	<td>{{ rule.output_parameter }}</td>
+            	<td>{{ rule.get_output_action_true_display }}</td>
+            	<td>{{ rule.output_parameter_true }}</td>
+            	<td>{{ rule.get_output_action_false_display }}</td>
+            	<td>{{ rule.output_parameter_false }}</td>
             	<td>{{ rule.description }}</td>
             	<td>{{ rule.result }}</td>
             	<td>{{ rule.datetime|date:"D d M Y" }} {{ rule.datetime|time:"H:i:s" }} </td>

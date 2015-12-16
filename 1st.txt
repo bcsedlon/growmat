@@ -66,10 +66,14 @@ sudo python setup.py install
 sudo pip install Django
 
 cd ~/downloads
-wget http://kent.dl.sourceforge.net/project/xmpppy/xmpppy/0.5.0-rc1/xmpppy-0.5.0rc1.tar.gz
-tar -zxvf xmpppy-0.5.0rc1.tar.gz
-cd xmpppy-0.5.0rc1
+#wget http://kent.dl.sourceforge.net/project/xmpppy/xmpppy/0.5.0-rc1/xmpppy-0.5.0rc1.tar.gz
+#tar -zxvf xmpppy-0.5.0rc1.tar.gz
+#cd xmpppy-0.5.0rc1
 
+wget https://github.com/normanr/xmpppy/archive/master.zip
+unzip master.zip
+cd xmpppy-master
+sudo python setup.py install
 
 git clone https://github.com/growmat/control.git
 

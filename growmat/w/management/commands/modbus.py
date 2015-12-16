@@ -262,7 +262,8 @@ class Command(BaseCommand):
                     a = float(rule.input.status)
                 
                 b = rule.input_parameter
-                op = rule.operation
+                op = rule.input_operation
+                
                 
                 exp = 'True if {} {} {} else False'.format(a, op, b)
                 r = eval(exp)
@@ -364,39 +365,45 @@ class Command(BaseCommand):
                     else:
                         a = rule.output.status
                 
-                    b = rule.output_parameter
-                    op = rule.action
-                    if op == '=':
-                        r = b
+                    if rule.result:
+                        b = rule.output_parameter_true
+                        op = rule.output_action_true
                     else:
-                        if op[0:1] == '&' or op == '|':
-                            a = int(a)
-                            b = int(b)
+                        b = rule.output_parameter_false
+                        op = rule.output_action_false
                         
-                        exp = '{} {} {}'.format(a, op, b)
-                        r = eval(exp)
-                        #print rule.description
-                        #print exp
-                        #print r
-                        #print '---'
+                    if op != 'None':
+                        if op == '=':
+                            r = b
+                        else:
+                            if op[0:1] == '&' or op == '|':
+                                a = int(a)
+                                b = int(b)
+                        
+                            exp = '{} {} {}'.format(a, op, b)
+                            r = eval(exp)
+                            #print rule.description
+                            #print exp
+                            #print r
+                            #print '---'
            
-                        #print rule.output_attribute
-                    if rule.output_attribute == 'VALUE':           
-                        rule.output.value = r
-                    #    print 'value'
-                    else:
-                        rule.output.status = int(r)
-                        #    print 'status'
+                            #print rule.output_attribute
+                        if rule.output_attribute == 'VALUE':           
+                            rule.output.value = r
+                        #    print 'value'
+                        else:
+                            rule.output.status = int(r)
+                            #    print 'status'
                 
                         #print rule.description
                         #print rule.output.value
                         #print rule.output.status
                         #print
                  
-                    rule.output.datetime = timezone.now()
-                    rule.output.save()
+                    #rule.output.datetime = timezone.now()
+                    #rule.output.save()
                 
-                rule.save()
+                #rule.save()
                     
                     
                  #   if rule.action == '=':
@@ -434,7 +441,8 @@ class Command(BaseCommand):
                     rule.output.status = rule.output.status & ~1
                     rule.save()
                     
-                    fn =  '/home/pi/growmat/growmat/ramdisk/0.csv'
+                    #fn =  '/home/pi/growmat/growmat/ramdisk/0.csv'
+                    fn = os.path.join(PROJECT_PATH, 'growmat', 'ramdisk', '0.csv')
                     f = open(fn, 'a+')
                     #f.write(dateformat.format(timezone.now(), 'Y-m-d H:i:s'))
                     f.write(str(rule.id))
