@@ -112,10 +112,11 @@ class Command(BaseCommand):
                 
                 
             
-                
-            counter = counter + 1
-            if counter > 60:
-                counter = 0
+            minute = dateformat.format(timezone.now(), 'i')
+            #counter = counter + 1
+            #if counter > 60:
+            #    counter = 0
+            if minute == '00':
                 #NOT WORK ON WINDOWS, has to be rewrite to python
                 #os.system('/home/pi/growmat/garchive')
                 appendArchives()

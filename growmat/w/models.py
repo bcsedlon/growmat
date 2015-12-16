@@ -121,6 +121,7 @@ class Rule(models.Model):
 	)
 	
 	ACTION_TYPE = (
+					('None', 'None'),
 					('=', '='),
 					('&', '&'),
 					('& ~', '& ~'),
@@ -137,12 +138,14 @@ class Rule(models.Model):
 	period = models.ForeignKey(Period)
 	input = models.ForeignKey(Instrument, related_name='input_instrument')
 	input_attribute = models.CharField(choices=ATTRIBUTE_TYPE, default=0, max_length=6)
-	operation = models.CharField(choices=OPERATION_TYPE, default=0, max_length=2)
+	input_operation = models.CharField(choices=OPERATION_TYPE, default=0, max_length=2)
 	input_parameter = models.FloatField(default=0, blank=True)
 	output = models.ForeignKey(Instrument, related_name='output_instrument')
 	output_attribute = models.CharField(choices=ATTRIBUTE_TYPE, default=0, max_length=6)
-	action = models.CharField(choices=ACTION_TYPE, default=0, max_length=3)
-	output_parameter = models.FloatField(default=0, blank=True)
+	output_action_true = models.CharField(choices=ACTION_TYPE, default='None', max_length=4)
+	output_parameter_true = models.FloatField(default=0, blank=True)
+	output_action_false = models.CharField(choices=ACTION_TYPE, default='None', max_length=4)
+	output_parameter_false = models.FloatField(default=0, blank=True)
 	description = models.CharField(null=True, blank=True,  max_length=256) 
 	result = models.BooleanField(default=False, blank=True) 
 	result0 = models.BooleanField(default=False, blank=True) 
@@ -151,7 +154,7 @@ class Rule(models.Model):
 class RuleForm(ModelForm):
     class Meta:
         model = Rule
-        fields = ['priority', 'period', 'input', 'input_attribute', 'operation', 'input_parameter', 'output', 'output_attribute', 'action', 'output_parameter', 'description', 'result', 'result0', 'datetime']
+        fields = ['priority', 'period', 'input', 'input_attribute', 'input_operation', 'input_parameter', 'output', 'output_attribute', 'output_action_true', 'output_parameter_true', 'output_action_false', 'output_parameter_false', 'description', 'result', 'result0', 'datetime']
         
     def __init__(self, *args, **kwargs):
         super(RuleForm, self).__init__(*args, **kwargs)
