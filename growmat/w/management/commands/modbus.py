@@ -138,10 +138,18 @@ def modbus_read(station, instrument, s):
             station.address = instrument.address
             #print station.address
             try:
-                value = station.read_register(instrument.type + instrument.index, 0)
+                if instrument.datatype == 0:
+                    value = station.read_register(instrument.type + instrument.index, 0)
+                if instrument.datatype == 1:
+                    #print 'read float'
+                    value = station.read_float(instrument.type + instrument.index, 3)
+                    #print 'done'
             except:
                 #time.sleep(0.1)
-                value = station.read_register(instrument.type + instrument.index, 0)
+                if instrument.datatype == 0:
+                    value = station.read_register(instrument.type + instrument.index, 0)
+                if instrument.datatype == 1:
+                    value = station.read_float(instrument.type + instrument.index, 3)
                 
             if value == 0:#sys.maxint:
                 instrument.status = instrument.status | Instrument.cIV
@@ -182,8 +190,8 @@ class Command(BaseCommand):
         #print PROJECT_PATH
         PROJECT_PATH = os.path.dirname(settings.BASE_DIR)
         
-        text = 'GROWMAT IP: ' + get_external_ip()
-        #text = 'GROWMAT'
+        #text = 'GROWMAT IP: ' + get_external_ip()
+        text = 'GROWMAT'
         print text
         call(['python', os.path.join(PROJECT_PATH, 'xsend.py') ,'growmat@jabbim.cz', text])
 

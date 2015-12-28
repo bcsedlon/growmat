@@ -17,7 +17,7 @@
 {% endif %}
 
 <table border=1>
-		<tr><th>ID</th><th>PRI</th><th>MANUAL</th><th>NAME</th><th>ADDRESS</th><th>TYPE</th><th>INDEX</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th><th>ARCHIVE</th></tr>
+		<tr><th>ID</th><th>PRI</th><th>MANUAL</th><th>NAME</th><th>ADDRESS</th><th>TYPE</th><th>INDEX</th><th>DATATYPE</th><th>VALUE</th><th>STATUS</th><th>DATETIME</th><th>UPDATE</th><th>DELETE</th><th>ARCHIVE</th></tr>
 		
 		{% if form.pk = 0 %}
 		<tr>
@@ -29,6 +29,7 @@
         	<td>{{ form.address }}</td>
             <td>{{ form.type }}</td>
             <td>{{ form.index }}</td>
+            <td>{{ form.datatype }}</td>
             <td>{{ form.value }}</td>
             <td>{{ form.status }}</td>
             <td></td>
@@ -52,6 +53,7 @@
             	<td>{{ form.address }}</td>
             	<td>{{ form.type }}</td>
             	<td>{{ form.index }}</td>
+            	<td>{{ form.datatype }}</td>
                 <td>{{ form.value }}</td>
                 <td>{{ form.status }}</td>
             	<td></td>
@@ -69,6 +71,7 @@
             	<td>{{ instrument.address }}</td>
             	<td>{{ instrument.get_type_display }}</td>
             	<td>{{ instrument.index }}</td>
+            	<td>{{ instrument.get_datatype_display }}</td>
                	<td>{{ instrument.value }} </td>
             	<td>{{ instrument.status }} </td>
             	<td>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} </td>

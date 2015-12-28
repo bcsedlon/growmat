@@ -28,11 +28,19 @@ import os
 import fnmatch
 
 import os, tempfile, zipfile
-from django.core.servers.basehttp import FileWrapper
+#from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
 import mimetypes
 
 #from test.utils import instrumented_test_render
+
+# coding: utf-8
+
+from django.contrib import auth
+
+
+
+
 
 
 class InstrumentCreate(CreateView):
@@ -132,6 +140,16 @@ def webcam(request, pk=None):
 	return render(request, 'w/webcam.html')
 
 def index(request):
+    username = 'local'
+    password =  'local'
+    #if authuser.username != username:
+    host = request.get_host()
+    if 'localhost' in host:
+        authuser = auth.authenticate(username=username, password=password)
+        auth.login(request, authuser)
+        #print authuser.username
+        
+    
     instruments = Instrument.objects.order_by('priority')
     context = RequestContext(request, {
             'instruments': instruments })
