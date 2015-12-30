@@ -25,8 +25,9 @@ SECRET_KEY = 'v@+#1joq*u0)3)njh24sw)5*ddip==@#&6(2g%99d*@as$8@oy'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+#DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -113,6 +114,7 @@ STATIC_URL = '/static/'
 # sev
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'ramdisk'),
     os.path.join(BASE_DIR, 'archives'),
     os.path.join(BASE_DIR, 'archives', '0'),
     os.path.join(BASE_DIR, 'archives', '1'),

@@ -137,7 +137,9 @@ def archive(request, pk=0):
    
 
 def webcam(request, pk=None):
-	return render(request, 'w/webcam.html')
+    path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'fswebcam.jpg')
+    os.system('raspistill -w 640 -h 480 -vf  -n -o ' + path) #-tl 60000
+    return render(request, 'w/webcam.html')
 
 def index(request):
     username = 'local'

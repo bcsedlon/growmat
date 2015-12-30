@@ -151,7 +151,7 @@ def modbus_read(station, instrument, s):
                 if instrument.datatype == 1:
                     value = station.read_float(instrument.type + instrument.index, 3)
                 
-            if value == 0:#sys.maxint:
+            if value == 32767:#sys.maxint:
                 instrument.status = instrument.status | Instrument.cIV
                 
             else:   
@@ -230,7 +230,7 @@ class Command(BaseCommand):
 
         
         while 1:
-            time_now = int(strftime("1%H%M%S", gmtime()))
+            time_now = int(strftime("%H%M%S", gmtime()))
             
             instruments = Instrument.objects.order_by('pk')
             #self.stdout.write('There are {} things!'.format(instruments.count()))
@@ -258,12 +258,16 @@ class Command(BaseCommand):
             
             rules = Rule.objects.order_by('priority')
             for rule in rules:
-              time_from =  int(rule.period.time_from.strftime('1%H%M%S'))
-              time_to =  int(rule.period.time_to.strftime('1%H%M%S'))
+              time_from =  int(rule.period.time_from.strftime('%H%M%S'))
+              time_to =  int(rule.period.time_to.strftime('%H%M%S'))
               
-              
-              if time_from < time_now & time_now <= time_to:
-                
+              #print '---'
+              #print  'description' + rule.description
+              #print 'time/manual check'
+              #print 'outputl: ' + rule.output.name
+              #print 'output manual: ' + str(rule.output.manual)
+              if time_from < time_now and time_now <= time_to and not rule.output.manual:
+                #print 'check ok'
                 if rule.input_attribute == 'VALUE':                            
                     a = rule.input.value
                 else:
@@ -366,8 +370,8 @@ class Command(BaseCommand):
                 #print rule.description
                 #print rule.result
                 
-                if rule.result:
-                    
+                #if rule.result:
+                if True:    
                     if rule.output_attribute ==  'VALUE':                          
                         a = rule.output.value
                     else:
@@ -409,7 +413,7 @@ class Command(BaseCommand):
                         #print
                  
                     #rule.output.datetime = timezone.now()
-                    #rule.output.save()
+                    rule.output.save()
                 
                 #rule.save()
                     
@@ -506,4 +510,4 @@ class Command(BaseCommand):
                 
             if i2c is not None:    
                 i2c.write_byte(PCF8574, PCF8574OutputValue)	
-            time.sleep(5)
+            time.sleep(1)
