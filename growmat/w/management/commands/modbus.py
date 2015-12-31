@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.utils import dateformat
 from django.conf import settings
 
-import sys
+import sys, os
 import urllib, re
 
 import ConfigParser
@@ -186,11 +186,17 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         print 'GROWMAT modbus'
+        
+        
         #PROJECT_PATH = os.path.normpath(os.path.join(PROJECT_PATH, '..'))
         #print PROJECT_PATH
         PROJECT_PATH = os.path.dirname(settings.BASE_DIR)
         
-        #text = 'GROWMAT IP: ' + get_external_ip()
+        path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'raspistill.jpg')
+        os.system('raspistill -v -w 640 -h 480 -vf -s -n -t 0 -o ' + path + ' &') #-tl 60000
+        
+        #extIP = get_external_ip()
+        #text = 'GROWMAT IP: ' + extIP
         text = 'GROWMAT'
         print text
         call(['python', os.path.join(PROJECT_PATH, 'xsend.py') ,'growmat@jabbim.cz', text])
@@ -236,6 +242,8 @@ class Command(BaseCommand):
             #self.stdout.write('There are {} things!'.format(instruments.count()))
             #print "->"
             for instrument in instruments:
+                instrument = Instrument.objects.get(pk=instrument.pk)
+                
                 if instrument.manual == False:
                     #print "-->"
                     #self.stdout.write('reading address {}'.format(instrument.address))
@@ -476,9 +484,21 @@ class Command(BaseCommand):
                         if rule.output.index==0:
                             #cl.send(xmpp.Message( rule.output.name ,rule.description ))
                             #execfile('python xsend.py "{}" "{}"'.format(rule.output.name ,rule.description))
-                            call(['python', '/home/pi/growmat/xsend.py' ,'{}'.format(rule.output.name), '{}'.format(rule.description)])
+                            scriptname = os.path.join(PROJECT_PATH, 'xsend.py')
+                            #call(['python', '/home/pi/growmat/xsend.py' ,'{}'.format(rule.output.name), '{}'.format(rule.description)])
+                            call(['python', scriptname ,'{}'.format(rule.output.name), '{}'.format(rule.description)])
                             #print "Jabber: send"
-                             
+                        
+                        if rule.output.index==1:
+                            scriptname = os.path.join(PROJECT_PATH, 'growmat', 'scripts', rule.description)
+                            scriptname = scriptname + ' &'
+                            print scriptname + ' start'
+                            try:
+                                os.system(scriptname)
+                                print scriptname + ' end'
+                                #os.spawnl(os.P_DETACH, scriptname)
+                            except:
+                                print sys.exc_info()[0]
                             
                             
                         

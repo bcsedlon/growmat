@@ -137,8 +137,9 @@ def archive(request, pk=0):
    
 
 def webcam(request, pk=None):
-    path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'fswebcam.jpg')
-    os.system('raspistill -w 640 -h 480 -vf  -n -o ' + path) #-tl 60000
+    #path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'fswebcam.jpg')
+    #os.system('raspistill -w 640 -h 480 -vf  -n -t 0 -o ' + path) #-tl 60000
+    os.system('pkill -SIGUSR1 raspistill')
     return render(request, 'w/webcam.html')
 
 def index(request):

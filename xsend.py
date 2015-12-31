@@ -30,7 +30,10 @@ for mandatory in ['jid','password']:
 jid=xmpp.protocol.JID(jidparams['jid'])
 cl=xmpp.Client(jid.getDomain(),debug=[])
 
-con=cl.connect()
+#print jid.getDomain()
+#server=('talk.google.com', 5223)
+server=(jid.getDomain(), 5223)
+con=cl.connect(server)
 if not con:
     #print 'could not connect!'
     sys.exit()
