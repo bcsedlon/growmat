@@ -1,11 +1,54 @@
 body {
 	background-color: black;
 	color: white;
+	font-family: Monospace;
 }
+
+html, body {
+	//width=100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+input[type="number"] {
+	font-family: Monospace;
+	font-size: 1.5em 
+}
+
 a {
 	color: white;
 }
  
+button {
+	height: 100px;
+	width: 100px;
+	font-family: Monospace;
+	border-radius: 5px;
+	//font-face: Tahoma;
+	//font-size: 1.2em
+}     
+ 
+button.normal {
+	background: white; 
+} 
+
+button.label {
+	background: white;
+	font-size: 1.5em 
+} 
+
+button.NT {
+	background: gray; 
+}     
+button.IV {
+    background: gray;
+}
+button.W {
+    background: yellow;
+}
+button.A {
+    background: red;
+}
 
 
 tr.NT {

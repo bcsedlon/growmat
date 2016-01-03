@@ -29,6 +29,7 @@ urlpatterns = [
 	url(r'^instrument/(?P<pk>[0-9]+)/$', views.instrument, name='instrument'),
 	url(r'^instrument_delete/(?P<pk>[0-9]+)/$', InstrumentDelete.as_view(), name='instrument_delete'),
 	
+	url(r'^webcam/(?P<pk>[0-9]+)/$', views.webcam, name='webcam'),
 	url(r'^webcam/$', views.webcam, name='webcam'),
 	
 	#url(r'^(?P<instrument_id>[0-9]+)/$', views.instrument, name='instrument'),

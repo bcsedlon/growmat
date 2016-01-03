@@ -10,19 +10,56 @@
     </head>
 
 <body>
+{% comment %}
 <h3>
 {% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
 <br>
+{% endcomment %}
 
-<a href="{% url 'w:index' %}">GROWMAT</a>
+
+<style type="text/css">
+.scrollToTop {position:fixed;bottom:50px;left:50px; border-radius: 0px;}
+.scrollUp {position:fixed;bottom:50px;left:160px;border-radius: 0px;}
+.scrollDown {position:fixed;bottom:50px;left:270px;border-radius: 0px;}
+</style>
+
+<script type="text/javascript">
+function scrollTo(i) {
+	//alert('Hello world!');
+    //$(window).scrollTop(0); // If you work with jQuery,
+    document.body.scrollTop =  document.body.scrollTop + i; // Or not.
+}
+function scrollToTop() {
+    //$(window).scrollTop(0); // If you work with jQuery,
+    document.body.scrollTop = 0; // Or not.
+}
+</script>
+
+<button class="scrollToTop" onclick="javascript:scrollToTop();">Scroll to top</button>
+<button class="scrollUp" onclick="javascript:scrollTo(-110);">Scroll up</button>
+<button class="scrollDown" onclick="javascript:scrollTo(110);">Scroll down</button>
 
 
-<a href="{% url 'w:instrument' %}">System</a>
 
-<a href="{% static  'raspistill.jpg' %}">Webcam</a> 
-<a href="{% static  'raspistill0.jpg' %}"> Webcam0</a>
 
-</h3>
+<table>
+<tr>
+<td>
+<a href="{% url 'w:index' %}"><button class="label">GROWMAT</button></a>
+</td>
+<td>
+<a href="{% url 'w:instrument' %}"><button class="label">System</button></a>
+</td>
+<td>
+<a href="{% url 'w:webcam' 0 %}"><button class="label">Webcam<br>0</button></a> 
+</td>
+<td>
+<a href="{% url 'w:webcam' 1 %}"><button class="label">Webcam<br>1</button></a>
+</td>
+</tr>
+</table>
+
+<hr>
 {% comment %}
 {% block content %}
 
@@ -48,9 +85,40 @@
 {% endblock %}
 {% endcomment %}
 
-<table border=0>
-		
+
+<table border=0>		
         {% for instrument in instruments %}
+        	{% cycle '<tr><td>' '<td>' '<td>' '<td>' %} 
+        	
+        	<a href="{% url 'w:detail' instrument.id %}">
+        	{% if instrument.NT %}
+        		<button class="NT">
+        	{% elif instrument.IV %}
+        		<button class="IV">
+        	{% elif instrument.W %}
+        		<button class="W">
+        	{% elif instrument.A %}
+        		<button class="A">
+        	{% else %}
+        		<button class="normal">
+        	{% endif %}
+        	
+        			{{ instrument.name }}<br/><br/>
+        			<big><b>{{ instrument.value|floatformat:-3 }}</b></big><br>
+        			({{ instrument.status }})
+            		{% if instrument.manual %}
+            			MANUAL
+            		{% endif %}
+        	
+        	</button></a>
+        	
+        	{% cycle '</td>' '</td>' '</td>' '</td></tr>' %} 
+        	
+        {% endfor %}
+       </table>
+{% comment %}       
+<table border=0>
+		{% for instrument in instruments %}
 			{% cycle '<tr>' '' '' %}
 			{% if instrument.NT %}
         		<td class="NT">
@@ -83,8 +151,8 @@
         {% endfor %}
  </table>
 
-
-
+{% endcomment %}
+<br><br><br><br><br><br><br><br><br><br><br><br><br>
 
 </body>
 </html> 

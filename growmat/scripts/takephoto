@@ -1,5 +1,5 @@
 echo "script start"
 #raspistill -v -w 640 -h 480 -vf -n -t 1 -o /home/pi/growmat/growmat/ramdisk/fswebcam0.jpg
 pkill -SIGUSR1 raspistill
-cp /home/pi/growmat/growmat/ramdisk/raspistill.jpg  /home/pi/growmat/growmat/ramdisk/raspistill0.jpg
+cp /home/pi/growmat/growmat/ramdisk/raspistill.jpg  /home/pi/growmat/growmat/ramdisk/1.jpg
 echo "script end"

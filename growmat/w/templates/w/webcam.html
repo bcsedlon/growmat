@@ -1,3 +1,4 @@
+{% comment %}
 {% extends 'w/base.html' %}
 {% block content %}
 
@@ -8,7 +9,46 @@
 
 
 {% load staticfiles %}
-<img src="{% static "raspistill.jpg" %}"/>
+<img src="{% static filename %}"/>
 
 
-{% endblock %} 
+{% endblock %}
+{% endcomment %}
+
+{% load staticfiles %}
+<html>
+	<head>
+	
+		<meta name="viewport" content="width=device-width">
+	
+		<title>GROWMAT</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'w/style.css' %}">
+    </head>
+
+<body>
+
+
+
+<table>
+<tr>
+<td>
+<a href="{% url 'w:index' %}"><button class="label">GROWMAT</button></a>
+</td>
+<td>
+<a href="{% url 'w:instrument' %}"><button class="label">System</button></a>
+</td>
+<td>
+<a href="{% url 'w:webcam' 0 %}"><button class="label">Webcam<br>0</button></a> 
+</td>
+<td>
+<a href="{% url 'w:webcam' 1 %}"><button class="label">Webcam<br>1</button></a>
+</td>
+</tr>
+</table>
+
+<hr>
+{{ text }}
+<br><br>
+<img width="420px" src="{% static filename %}"/>
+</body>
+</html> 

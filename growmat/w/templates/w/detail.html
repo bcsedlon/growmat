@@ -7,7 +7,24 @@
     </head>
 
 <body>
+<table>
+<tr>
+<td>
+<a href="{% url 'w:index' %}"><button class="label">GROWMAT</button></a>
+</td>
+<td>
+<a href="{% url 'w:instrument' %}"><button class="label">System</button></a>
+</td>
+<td>
+<a href="{% url 'w:webcam' 0 %}"><button class="label">Webcam<br>0</button></a> 
+</td>
+<td>
+<a href="{% url 'w:webcam' 1 %}"><button class="label">Webcam<br>1</button></a>
+</td>
+</tr>
+</table>
 
+<hr>
 {% comment %}
 <h3>
 {% if user.is_authenticated %}{{ user.username }} <a href="{% url 'w:logout' %}">logout</a>{% else %}<a href="{% url 'w:login' %}">Login</a>{% endif %}
@@ -41,7 +58,7 @@
  </table>
 {% endblock %}
 
-
+     {% comment %}	
 <table>
 	<tr>
 	{% if instrument.NT %}
@@ -58,86 +75,27 @@
 	{% endcomment %}
 	
 	
-	NAME <h3>{{ instrument.name }}</h3>
+	NAME <h2>{{ instrument.name }}</h2>
 	<hr>
 	
 	DATETIME (STATUS) <h3>{{ instrument.datetime|date:"D d M Y" }} {{ instrument.datetime|time:"H:i:s" }} ({{ instrument.status }}) </h3>
 	<hr>
 	
-	
-	
-	<form action="" method="post">{% csrf_token %}
-		
-			VALUE
+	VALUE
 			<h3>
 				{{ form.value }}
 			</h3>&nbsp;
-					<input type="submit" name="setValue" value="Set" class="touch"/>
-    				<input type="submit" name="setOff" value="Off" class="touch"/>
-    	    		<input type="submit" name="setOn" value="On" class="touch" />
-					&nbsp;
-    		
-			<hr>
-    		<table>
-			<tr><td class="normal" style="width: 100px;">
-				<a href="{% url 'w:index' %}">Back</a>
-				</td>
-				<td align="center">
-    			<input type="submit" name="resetManual" value="Auto" class="touch" 
-				{% if not instrument.manual %}
+  <form action="" method="post">{% csrf_token %}
+  <table>
+
+			<tr><td><button class="label" type="submit" name="setValue">SET</button></td>
+    		<td><button class="label" type="submit" name="setOff">OFF</button></td>
+    	    <td><button class="label" type="submit" name="setOn">ON</button></td>
+        	<td><button class="label" type="submit" name="resetManual"
+        	{% if not instrument.manual %}
 					disabled
-				{% endif %}
-				/>
-				</td>
-				<td class="normal" style="width: 100px;">
-				<a href="{% url 'w:detail' instrument.id %}">Refresh</a>
-    			</td>
-			</tr>
-			</table>
+				{% endif %}>AUTO</button></td></tr>
+  			</table>
 		</form>
-  {% comment %}  			
-    	</td>
-    	</tr>
-	
-	
-	
-	
-        {% for instrument in instruments %}
-			{% cycle '<tr>' '' '' %}
-			{% if instrument.NT %}
-        		<td class="NT">
-        	{% elif instrument.IV %}
-        		<td class="IV">
-        	{% elif instrument.W %}
-        		<td class="W">
-        	{% elif instrument.A %}
-        		<td class="A">
-        	{% else %}
-        		<td class="normal">
-        	{% endif %}
-            	{% if user.is_authenticated %}
-            		<a href="{% url 'w:instrument' instrument.id %}"
-            	{% else %}
-            		<a href="{% url 'w:login' %}"
-            	{% endif %}
-            	<h3>{{ instrument.name }}</h3>
-           
-            	<h1>{{ instrument.value }}</h1>
-            	({{ instrument.status }})
-            	{% if instrument.manual %}
-            		MANUAL
-            	{% endif %}
-            	</a>
-            
-            </td>
-            {% cycle '' '' '</tr>' %}
-        {% endfor %}
-
- 
- </table>
- {% endcomment %}
-
-
-
-</body>
-</html> 
+	</body>
+</html> 	

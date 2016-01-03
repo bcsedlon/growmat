@@ -27,7 +27,8 @@ import shutil
 import os
 import fnmatch
 
-import os, tempfile, zipfile
+
+import os, tempfile, zipfile, time
 #from django.core.servers.basehttp import FileWrapper
 from django.conf import settings
 import mimetypes
@@ -136,11 +137,24 @@ def archive(request, pk=0):
     return render(request, 'w/archive.html', context)
    
 
-def webcam(request, pk=None):
+def webcam(request, pk='0'):
     #path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'fswebcam.jpg')
     #os.system('raspistill -w 640 -h 480 -vf  -n -t 0 -o ' + path) #-tl 60000
-    os.system('pkill -SIGUSR1 raspistill')
-    return render(request, 'w/webcam.html')
+    filename = str(pk) + '.jpg'
+    pathDst = os.path.join(PROJECT_PATH,'growmat','ramdisk', filename)
+    
+    if pk == '0':
+        os.system('pkill -SIGUSR1 raspistill')
+        pathSrc = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'raspistill.jpg')
+    
+        os.system('cp -f ' + pathSrc + ' ' + pathDst)
+    
+    text = time.ctime(os.path.getmtime(pathDst))
+    context = RequestContext(request, {
+            'filename': filename,
+            'text': text,
+             })
+    return render(request, 'w/webcam.html', context)
 
 def index(request):
     username = 'local'

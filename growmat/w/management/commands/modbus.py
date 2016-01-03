@@ -232,7 +232,8 @@ class Command(BaseCommand):
         #station.serial.parity   = serial.PARITY_NONE
         station.serial.stopbits = 2
         station.serial.timeout  = 0.05   # seconds
-        station.serial.timeout  = 0.5   # seconds
+        station.serial.timeout  = 0.1
+        #station.serial.timeout  = 0.5   # seconds
 
         
         while 1:
@@ -490,12 +491,21 @@ class Command(BaseCommand):
                             #print "Jabber: send"
                         
                         if rule.output.index==1:
-                            scriptname = os.path.join(PROJECT_PATH, 'growmat', 'scripts', rule.description)
-                            scriptname = scriptname + ' &'
-                            print scriptname + ' start'
+                            i = rule.description.find(' ')
+                            if i > -1:
+                                scriptparam = ' ' + str(rule.result) + rule.description[i:]
+                                scriptname = os.path.join(PROJECT_PATH, 'growmat', 'scripts', rule.description[:i])
+                            else:
+                                scriptparam = ' ' + str(rule.result)
+                                scriptname = os.path.join(PROJECT_PATH, 'growmat', 'scripts', rule.description)
+                                
+                            
+                            scriptname = scriptname + scriptparam + ' &'
+                            #print scriptname + ' start'
+                            print scriptname
                             try:
                                 os.system(scriptname)
-                                print scriptname + ' end'
+                                #print scriptname + ' end'
                                 #os.spawnl(os.P_DETACH, scriptname)
                             except:
                                 print sys.exc_info()[0]
@@ -530,4 +540,4 @@ class Command(BaseCommand):
                 
             if i2c is not None:    
                 i2c.write_byte(PCF8574, PCF8574OutputValue)	
-            time.sleep(1)
+            time.sleep(0.5)
