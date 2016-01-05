@@ -26,7 +26,7 @@ from .models import Archive
 import shutil
 import os
 import fnmatch
-
+import math
 
 import os, tempfile, zipfile, time
 #from django.core.servers.basehttp import FileWrapper
@@ -156,7 +156,10 @@ def webcam(request, pk='0'):
              })
     return render(request, 'w/webcam.html', context)
 
-def index(request):
+def index(request, page=0):
+    page = int(page)
+    instrumentsOnPage = 20
+    
     username = 'local'
     password =  'local'
     #if authuser.username != username:
@@ -168,11 +171,24 @@ def index(request):
         
     
     instruments = Instrument.objects.order_by('priority')
+    lastpage = int(math.ceil(len(instruments)/instrumentsOnPage))
+    instruments = instruments[page*instrumentsOnPage:page*instrumentsOnPage+instrumentsOnPage]
+    
+    nextpage = page + 1
+    nextpage = min(nextpage, lastpage)
+    
+    prevpage = page - 1
+    prevpage = max(prevpage, 0)
+    
     context = RequestContext(request, {
-            'instruments': instruments })
+            'instruments': instruments,
+            'page' : page,
+            'lastpage' : lastpage,
+            'nextpage' : nextpage ,
+            'prevpage' : prevpage  })
     return render(request, 'w/index.html', context)        
 
-def detail(request, pk=None):
+def detail(request, page=0, pk=None):
     instrument = Instrument.objects.get(pk=pk)
     if request.method == 'POST':
         if 'resetManual' in request.POST:
@@ -185,6 +201,13 @@ def detail(request, pk=None):
             value = instrument.value
             if 'setValue' in request.POST:
                 value = form.data['value']
+                #if form.is_valid():
+                #    data = form.cleaned_data
+                #    value = data['value']
+                #else:
+                #    value = form['value'].value()
+                #value = form.data['value']
+                #x =  form.data
             if 'setOff' in request.POST:
                 value = 0
             if 'setOn' in request.POST:
@@ -194,12 +217,14 @@ def detail(request, pk=None):
             instrument.status = 0 #instrument.status & ~ 3
             instrument.manual = True
             instrument.save()        
-        return HttpResponseRedirect('/w/')
+        return HttpResponseRedirect('/w/' + page)
     
     #instrument = Instrument.objects.get(pk=pk)
     form = InstrumentForm(instance = instrument)
     context = RequestContext(request, {
-        'instrument': instrument, 'form':form })
+        'instrument': instrument,
+        'form':form,
+        'page': page })
     return render(request, 'w/detail.html', context)
 	
 def instrument(request, pk=None):

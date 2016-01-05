@@ -6,8 +6,8 @@ body {
 
 html, body {
 	//width=100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
+    //overflow-x: hidden;
+    //overflow-y: hidden;
 }
 
 input[type="number"] {
@@ -27,6 +27,15 @@ button {
 	//font-face: Tahoma;
 	//font-size: 1.2em
 }     
+
+button.pagebutton {
+	height: 50px;
+	width: 100px;
+	font-family: Monospace;
+	border-radius: 5px;
+	//font-face: Tahoma;
+	//font-size: 1.2em
+}  
  
 button.normal {
 	background: white; 

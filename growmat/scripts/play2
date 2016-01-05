@@ -1,0 +1,13 @@
+#!/bin/sh
+#echo $0: $*
+#pkill mpg123
+
+if [ $1 = "True" ]; then
+    echo "True"
+	#mpg123 /home/pi/growmat/growmat/scripts/cml.mp3
+	mpg123 $2 &
+fi
+
+
+
+

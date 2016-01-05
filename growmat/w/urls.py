@@ -9,7 +9,9 @@ from .views import InstrumentDelete, RuleDelete, PeriodDelete
 
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
-	url(r'^detail/(?P<pk>[0-9]+)/$', views.detail, name='detail'),
+	url(r'^(?P<page>[0-9]+)/$', views.index, name='index'),
+	
+	url(r'^detail/(?P<page>[0-9]+)/(?P<pk>[0-9]+)/$', views.detail, name='detail'),
 	
 	url(r'^archive/(?P<pk>[0-9]+)/$', views.archive, name='archive'),
 	url(r'^archive/$', views.archive, name='archive'),

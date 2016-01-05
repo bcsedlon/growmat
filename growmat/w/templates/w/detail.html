@@ -10,7 +10,7 @@
 <table>
 <tr>
 <td>
-<a href="{% url 'w:index' %}"><button class="label">GROWMAT</button></a>
+<a href="{% url 'w:index' page %}"><button class="label">GROWMAT</button></a>
 </td>
 <td>
 <a href="{% url 'w:instrument' %}"><button class="label">System</button></a>
@@ -74,7 +74,7 @@
     {% endif %}
 	{% endcomment %}
 	
-	
+	<form action="" method="post">{% csrf_token %}
 	NAME <h2>{{ instrument.name }}</h2>
 	<hr>
 	
@@ -85,7 +85,7 @@
 			<h3>
 				{{ form.value }}
 			</h3>&nbsp;
-  <form action="" method="post">{% csrf_token %}
+  
   <table>
 
 			<tr><td><button class="label" type="submit" name="setValue">SET</button></td>

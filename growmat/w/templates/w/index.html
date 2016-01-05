@@ -16,7 +16,7 @@
 <br>
 {% endcomment %}
 
-
+{% comment %}
 <style type="text/css">
 .scrollToTop {position:fixed;bottom:50px;left:50px; border-radius: 0px;}
 .scrollUp {position:fixed;bottom:50px;left:160px;border-radius: 0px;}
@@ -38,7 +38,7 @@ function scrollToTop() {
 <button class="scrollToTop" onclick="javascript:scrollToTop();">Scroll to top</button>
 <button class="scrollUp" onclick="javascript:scrollTo(-110);">Scroll up</button>
 <button class="scrollDown" onclick="javascript:scrollTo(110);">Scroll down</button>
-
+{% endcomment %}
 
 
 
@@ -90,7 +90,7 @@ function scrollToTop() {
         {% for instrument in instruments %}
         	{% cycle '<tr><td>' '<td>' '<td>' '<td>' %} 
         	
-        	<a href="{% url 'w:detail' instrument.id %}">
+        	<a href="{% url 'w:detail' page instrument.id %}">
         	{% if instrument.NT %}
         		<button class="NT">
         	{% elif instrument.IV %}
@@ -115,6 +115,16 @@ function scrollToTop() {
         	{% cycle '</td>' '</td>' '</td>' '</td></tr>' %} 
         	
         {% endfor %}
+       </table>
+       <hr>
+       <table>
+        
+        <tr>
+        <td><a href="{% url 'w:index' '0' %}"><button class="pagebutton"><<<br>0</button></a></td>
+        <td><a href="{% url 'w:index' prevpage  %}"><button class="pagebutton"><<br>{{ prevpage }}</button></a></td>
+        <td><a href="{% url 'w:index' nextpage %}"><button class="pagebutton">><br>{{ nextpage }}</button></a></td>
+        <td><a href="{% url 'w:index' lastpage  %}"><button class="pagebutton">>><br>{{ lastpage }}</button></a></td>
+        </tr>
        </table>
 {% comment %}       
 <table border=0>
@@ -152,7 +162,7 @@ function scrollToTop() {
  </table>
 
 {% endcomment %}
-<br><br><br><br><br><br><br><br><br><br><br><br><br>
+
 
 </body>
 </html> 
