@@ -140,9 +140,11 @@ def modbus_read(station, instrument, s):
             try:
                 if instrument.datatype == 0:
                     value = station.read_register(instrument.type + instrument.index, 0)
+                    value = value * 0.01
                 if instrument.datatype == 1:
                     #print 'read float'
                     value = station.read_float(instrument.type + instrument.index, 3)
+                    
                     #print 'done'
             except:
                 #time.sleep(0.1)
@@ -157,7 +159,7 @@ def modbus_read(station, instrument, s):
             else:   
                 instrument.status = instrument.status & ~Instrument.cIV         
                 #instrument.value = value / 1000 #minimalmodbus._bytestringToFloat(registerstring)
-                instrument.value = float(value) * 0.01
+                instrument.value = float(value)
             
             instrument.datetime = timezone.now()
             #instrument.status = instrument.status ^ Instrument.INI
