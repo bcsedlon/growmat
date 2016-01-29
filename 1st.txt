@@ -6,6 +6,8 @@ network={
     ssid="Vandrehjem3"
     psk="LVH51C03"
 }
+
+CFHXAJYD
 	
 sudo raspi-config
 >
@@ -61,7 +63,10 @@ sudo pip install minimalmodbus
 
 sudo apt-get install python-smbus
 sudo apt-get install i2c-tools
-sudo python setup.py install
+
+#sudo python setup.py install
+sudo apt-get install python-pip
+pip install utils
 
 sudo pip install Django
 
@@ -75,7 +80,8 @@ unzip master.zip
 cd xmpppy-master
 sudo python setup.py install
 
-git clone https://github.com/growmat/control.git
+#git clone https://github.com/growmat/control.git
+git clone https://github.com/bcsedlon/growmat.git
 
 rsync -a control/ ~/growmat/
 
@@ -101,8 +107,11 @@ sudo crontab -e
 sudo reboot
 
 
-git config --global user.name "info@growmat.czweb.org"
-git config --global user.email info@growmat.czweb.org
+#git config --global user.name "info@growmat.czweb.org"
+#git config --global user.email info@growmat.czweb.org
+
+git config --global user.name bcsedlon@gmail.com
+git config --global user.email bcsedlon@gmail.com
 git add *.txt
 git commit
 git push
@@ -129,6 +138,30 @@ to do dht lib
 https://github.com/adafruit/DHT-sensor-library
 
 
+sudo nano /boot/config.txt
+>
+#display_rotate=0 #Normal 
+#display_rotate=1 #90 degrees 
+#display_rotate=2 #180 degrees 
+display_rotate=3 #270 degrees 
+#display_rotate=0x10000 #horizontal flip 
+#display_rotate=0x20000 #vertical flip 
 
+sudo apt-get install xinput -y
+sudo nano /etc/X11/xinit/xinitrc
+>
+#before;
+#. /etc/X11/Xsession
+DISPLAY=:0 xinput --set-prop 'RPI_TOUCH By ZH851' 'Evdev Axes Swap' 1
+DISPLAY=:0 xinput --set-prop 'RPI_TOUCH By ZH851' 'Evdev Axis Inversion' 1 1
+
+sudo nano /etc/xdg/lxsession/LXDE-pi/autostart
+>
+@xscreensaver -no-splash
+@xset s off
+@xset -dpms
+@xset s noblank
+@sed -i 's/"exited_cleanly": false/"exited_cleanly": true/' ~/.config/chromium/Default/Preferences
+@chromium --noerrdialogs --kiosk http://localhost/w --incognito
 
  
