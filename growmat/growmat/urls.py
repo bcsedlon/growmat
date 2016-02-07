@@ -20,5 +20,5 @@ urlpatterns = [
 	url(r'^w/', include('w.urls', namespace="w")),
 	url(r'^admin/', include(admin.site.urls)),
 	
-
+	url(r'', include('w.urls', namespace="w")),
 ]

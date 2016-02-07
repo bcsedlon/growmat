@@ -23,9 +23,8 @@
 // Note that older versions of this library took an optional third parameter to
 // tweak the timings for faster processors.  This parameter is no longer needed
 // as the current DHT reading algorithm adjusts itself to work on faster procs.
+
 DHT dht(DHTPIN, DHTTYPE);
-
-
 
 #include "SimpleModbusSlave.h"
 
@@ -75,11 +74,11 @@ enum
 {     
   // just add or remove registers and your good to go...
   // The first register starts at address 0
-  ADC_VAL,     
-  LIGHT,
-  TEMP,
-  HUM,
-  HI, 
+  DATA0,     
+  DATA1,
+  DATA2,
+  DATA3,
+  DATA4, 
   HOLDING_REGS_SIZE // leave this one
   // total number of registers for function 3 and 16 share the same register array
   // i.e. the same address space
@@ -116,6 +115,7 @@ void setup()
 
   // modbus_update_comms(baud, byteFormat, id) is not needed but allows for easy update of the
   // port variables and slave id dynamically in any function.
+  
   modbus_update_comms(9600, SERIAL_8N2, 2);
   
   pinMode(LED, OUTPUT);
@@ -127,13 +127,14 @@ long i = 0;
 void loop()
 {
   //digitalWrite(LED, HIGH);
+  
   // modbus_update() is the only method used in loop(). It returns the total error
   // count since the slave started. You don't have to use it but it's useful
   // for fault finding by the modbus master.
   
   modbus_update();
   
-  //holdingRegs[ADC_VAL] = 1;
+  holdingRegs[DATA0] = 1;
   //holdingRegs[PWM_VAL] = 2;
   
   //analogRead(A0); // update data to be read by the master to adjust the PWM
@@ -176,22 +177,6 @@ void loop()
    if(!isnan(h0)) {
      h = h0;
    }
-  //}// Read temperature as Fahrenheit (isFahrenheit = true)
-  //float f = dht.readTemperature(true);
-
-  // Check if any reads failed and exit early (to try again).
-  ///if (isnan(h) || isnan(t)) {
-    //Serial.println("Failed to read from DHT sensor!");
-    //return;
- //   h = 99;
- //   t = 99;
- // }
-
-  // Compute heat index in Fahrenheit (the default)
-  //float hif = dht.computeHeatIndex(f, h);
-  // Compute heat index in Celsius (isFahreheit = false)
-  //float t = 10;
-  //float h = 20;
   
   float hic = dht.computeHeatIndex(t, h, false);
   
@@ -199,10 +184,11 @@ void loop()
   if(light > 15) {
    light = 32768; 
   }
-  holdingRegs[LIGHT]= analogRead(LIGHTPIN);
-  holdingRegs[TEMP] = (t * 100);
-  holdingRegs[HUM] = int(h * 100);
-  holdingRegs[HI] = int(hic * 100);
+  
+  holdingRegs[DATA1]= light;
+  holdingRegs[DATA2] = (t * 100);
+  holdingRegs[DATA3] = int(h * 100);
+  holdingRegs[DATA4] = int(hic * 100);
 digitalWrite(LED, LOW);
 }
 
