@@ -115,6 +115,23 @@ import minimalmodbus
 #HIND0 = 0
 #subprocess.Popen(["python", "archive.py"])
 
+def modbus_write(station, instrument, s):
+    try:
+        try:
+            print 'w'
+            station.write_register(instrument.type + instrument.index, instrument.value, 0)
+        except:
+            print 'w2'
+            station.write_register(instrument.type + instrument.index, instrument.value,  0)
+        
+        instrument.datetime = timezone.now()
+        instrument.status = instrument.status & ~Instrument.cNT
+        instrument.save()   
+    except:
+        instrument.datetime = timezone.now()
+        instrument.status = instrument.status | Instrument.cNT
+        instrument.save()    
+
 def modbus_read(station, instrument, s):
         #dinstrument = Instrument.objects.get(pk=9)
 		#instrument.address, instrument.type + instrument.index)
@@ -194,8 +211,8 @@ class Command(BaseCommand):
         #print PROJECT_PATH
         PROJECT_PATH = os.path.dirname(settings.BASE_DIR)
         
-        path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'raspistill.jpg')
-        os.system('raspistill -v -w 640 -h 480 -vf -s -n -t 0 -o ' + path + ' &') #-tl 60000
+        #path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'raspistill.jpg')
+        #os.system('raspistill -v -w 640 -h 480 -vf -s -n -t 0 -o ' + path + ' &') #-tl 60000
         
         #extIP = get_external_ip()
         #text = 'GROWMAT IP: ' + extIP
@@ -247,7 +264,11 @@ class Command(BaseCommand):
             for instrument in instruments:
                 instrument = Instrument.objects.get(pk=instrument.pk)
                 
-                if instrument.manual == False:
+                if instrument.output == True:
+                    if instrument.address > 0:
+                        modbus_write(station, instrument, self)
+                
+                if instrument.manual == False and instrument.output == False:
                     #print "-->"
                     #self.stdout.write('reading address {}'.format(instrument.address))
                     #self.stdout.write('reading index {}'.format(instrument.type + instrument.index))

@@ -50,6 +50,7 @@ class Instrument(models.Model):
 	type = models.IntegerField(choices=INSTRUMENT_TYPE, default=0)
 	#index = models.IntegerField(choices=INSTRUMENT_INDEX, default=0)
 	index = models.IntegerField(default=0)
+	output = models.BooleanField(default = False, blank=True)
 	datatype = models.IntegerField(choices=DATA_TYPE, default=0)
 	name = models.CharField(default='NEW',  max_length=256)
 	value = models.FloatField(default=0)
@@ -75,7 +76,7 @@ class Instrument(models.Model):
 class InstrumentForm(ModelForm):
     class Meta:
         model = Instrument
-        fields = ['priority', 'manual', 'address', 'type', 'index', 'datatype','name', 'value', 'status', 'datetime']
+        fields = ['priority', 'manual', 'address', 'type', 'index', 'output', 'datatype','name', 'value', 'status', 'datetime']
 
 
 class InstrumentList(ListView):
