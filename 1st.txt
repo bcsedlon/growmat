@@ -8,6 +8,11 @@ network={
 }
 
 CFHXAJYD
+
+autoreconnect wifi
+/etc/ifplugd/action.d/ and rename the ifupdown file to ifupdown.original
+cp /etc/wpa_supplicant/ifupdown.sh ./ifupdown
+sudo reboot
 	
 sudo raspi-config
 >

@@ -157,11 +157,12 @@ class Rule(models.Model):
 	result = models.BooleanField(default=False, blank=True) 
 	result0 = models.BooleanField(default=False, blank=True) 
 	datetime = models.DateTimeField(null=True, blank=True) 
+	once = models.BooleanField(default=False, blank=True) 
 
 class RuleForm(ModelForm):
     class Meta:
         model = Rule
-        fields = ['priority', 'period', 'input', 'input_attribute', 'input_operation', 'input_parameter', 'output', 'output_attribute', 'output_action_true', 'output_parameter_true', 'output_action_false', 'output_parameter_false', 'description', 'result', 'result0', 'datetime']
+        fields = ['priority', 'period', 'input', 'input_attribute', 'input_operation', 'input_parameter', 'output', 'output_attribute', 'output_action_true', 'output_parameter_true', 'output_action_false', 'output_parameter_false', 'description', 'result', 'result0', 'datetime', 'once']
         
     def __init__(self, *args, **kwargs):
         super(RuleForm, self).__init__(*args, **kwargs)

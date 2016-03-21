@@ -138,6 +138,9 @@ def archive(request, pk=0):
    
 
 def webcam(request, pk='0'):
+    context = RequestContext(request)
+    return render(request, 'w/webcam.html', context)
+    
     #path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'fswebcam.jpg')
     #os.system('raspistill -w 640 -h 480 -vf  -n -t 0 -o ' + path) #-tl 60000
     filename = str(pk) + '.jpg'
