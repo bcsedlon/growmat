@@ -245,10 +245,10 @@ class Command(BaseCommand):
                         
                             exp = '{} {} {}'.format(a, op, b)
                             r = eval(exp)
-                            if rule.output_attribute == 'VALUE':           
-                                rule.output.value = r
-                            else:
-                                rule.output.status = int(r)
+                        if rule.output_attribute == 'VALUE':           
+                            rule.output.value = r
+                        else:
+                            rule.output.status = int(r)
                 
                     rule.output.save()
                                 
