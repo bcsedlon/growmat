@@ -39,8 +39,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    #'djangosecure',
 	#'dbbackup',
 	'w',
+#    'mod_wsgi.server',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -52,6 +54,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    #'djangosecure.middleware.SecurityMiddleware',
 )
 
 ROOT_URLCONF = 'growmat.urls'
@@ -111,7 +114,7 @@ USE_TZ = True
 #STATIC_URL = '/w/static/w/'
 STATIC_URL = '/static/'
 
-# sev
+# sev 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'ramdisk'),
@@ -133,3 +136,5 @@ DBBACKUP_BACKUP_DIRECTORY = '/home/pi/growmat/'
 DBBACKUP_FILENAME_TEMPLATE = 'dbbackup'
 
 LOGIN_REDIRECT_URL = '/w/'
+
+#SECURE_SSL_REDIRECT = True

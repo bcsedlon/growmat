@@ -55,7 +55,7 @@ def appendArchives():
             if not os.path.exists(os.path.join(dstPath, pk)):
                 os.mkdir(os.path.join(dstPath, pk))
                 
-            d = time.strftime('%Y%m%d-')    
+            d = time.strftime('%Y%m%d-', time.localtime())    
             appendArchive(os.path.join(srcPath, file),  os.path.join(dstPath, pk, d + file), True)
             #f.append(file)
             
@@ -94,7 +94,9 @@ class Command(BaseCommand):
                 #print fn
                 #fn =  '/home/pi/growmat/growmat/ramdisk/' +   str(instrument.pk) +  '.csv'
                 f = open(fn, 'a+')
-                f.write(dateformat.format(timezone.now(), 'Y-m-d H:i:s'))
+                #f.write(dateformat.format(timezone.now(), 'Y-m-d H:i:s'))
+                f.write(strftime('%Y-%m-%d %H:%M:%S', time.localtime()))
+                #print strftime('%Y-%m-%d %H:%M:%S', time.localtime())
                 f.write(';')
                 f.write(str(instrument.value))
                 f.write(';')
@@ -116,7 +118,7 @@ class Command(BaseCommand):
             #counter = counter + 1
             #if counter > 60:
             #    counter = 0
-            if minute == '00':
+            if minute == '59':
                 #NOT WORK ON WINDOWS, has to be rewrite to python
                 #os.system('/home/pi/growmat/garchive')
                 appendArchives()

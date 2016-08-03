@@ -17,12 +17,12 @@ class Instrument(models.Model):
 	cW  = 1<<3
 	
 	INSTRUMENT_TYPE = (
-					(0, 'SYSTEM'),
-					(10, 'OUTPUT'),
-     				(20, 'THERMOMETER'),
-         			(30, 'HUMIDITYMETER'),
-    			    (40, 'DISTANCEMETER'),
-    				(50, 'PHMETER'),    				
+					(10, 'SYSTEM'),
+					(0, 'MODBUS'),
+     				(20, 'SCRIPT'),
+         			#(30, 'HUMIDITYMETER'),
+    			    #(40, 'DISTANCEMETER'),
+    				#(50, 'PHMETER'),    				
 	)
 	
 	INSTRUMENT_INDEX = (

@@ -4,17 +4,17 @@
 #define SLAVEID 10
 #include "SimpleModbusSlave.h"
 
-#define OUT_PWM 3 // PWM
+#define OUT_PWM0 10 // PWM
+#define OUT_PWM1 11 // PWM
 
-#define OUT0 5 // off/on
-#define OUT1 6 // off/on
-#define OUT2 7 // off/on
-#define OUT3 8 // off/on
-#define OUT4 9 // off/on
-#define OUT5 10 // off/on
-#define OUT6 11 // off/on
+#define OUT0 3 // off/on
+#define OUT1 4 // off/on
+#define OUT2 5 // off/on
+#define OUT3 6 // off/on
+#define OUT4 7 // off/on
+#define OUT5 8 // off/on
+#define OUT6 9 // off/on
 #define OUT7 12 // off/on
-
 
 #define  LED 13 
 
@@ -73,7 +73,7 @@ enum
   DATA8,  
   DATA9,  
   DATA10,  
-  DATA11,  
+  DATA11,   
   HOLDING_REGS_SIZE // leave this one
   // total number of registers for function 3 and 16 share the same register array
   // i.e. the same address space
@@ -106,7 +106,7 @@ void setup()
      These byte formats are already defined in the Arduino global name space. 
   */
 	
-  modbus_configure(&Serial, 9600, SERIAL_8N2, SLAVEID, 4, HOLDING_REGS_SIZE, holdingRegs);
+  modbus_configure(&Serial, 9600, SERIAL_8N2, SLAVEID, 2, HOLDING_REGS_SIZE, holdingRegs);
 
   // modbus_update_comms(baud, byteFormat, id) is not needed but allows for easy update of the
   // port variables and slave id dynamically in any function.
@@ -114,7 +114,8 @@ void setup()
   
   pinMode(LED, OUTPUT);
   //digitalWrite(LED, LOW);
-  pinMode(OUT_PWM, OUTPUT);
+  pinMode(OUT_PWM0, OUTPUT);
+  pinMode(OUT_PWM1, OUTPUT);
   pinMode(OUT0, OUTPUT);
   pinMode(OUT1, OUTPUT);
   pinMode(OUT2, OUTPUT);
@@ -147,13 +148,11 @@ void loop()
      holdingRegs[0] = analogRead(A0);
      analogWrite(LED, holdingRegs[1]/4);
   */
-  
- 
-  
+
   holdingRegs[DATA0] = 10 * 100;
-  
-  analogWrite(OUT_PWM, holdingRegs[DATA1]);
-  
+
+  digitalWrite(LED, (bool(holdingRegs[DATA1])));
+    
   digitalWrite(OUT0, !(bool(holdingRegs[DATA2])));
   digitalWrite(OUT1, !(bool(holdingRegs[DATA3])));
   digitalWrite(OUT2, !(bool(holdingRegs[DATA4])));
@@ -162,8 +161,7 @@ void loop()
   digitalWrite(OUT5, !(bool(holdingRegs[DATA7])));
   digitalWrite(OUT6, !(bool(holdingRegs[DATA8])));
   digitalWrite(OUT7, !(bool(holdingRegs[DATA9])));
-  digitalWrite(LED, (bool(holdingRegs[DATA10])));
   
-  
-  
+  analogWrite(OUT_PWM0, holdingRegs[DATA10]);
+  analogWrite(OUT_PWM1, holdingRegs[DATA11]);
 }

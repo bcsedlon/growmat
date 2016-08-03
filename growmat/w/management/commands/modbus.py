@@ -1,3 +1,4 @@
+
 from django.core.management.base import BaseCommand
 #from django.core.management.base import CommandError
 from django.utils import timezone
@@ -82,10 +83,11 @@ def get_external_ip():
 
 def modbus_write(station, instrument, s):
     try:
+        station.address = instrument.address
         try:
-            station.write_register(instrument.type + instrument.index, instrument.value, 0)
+            station.write_register(instrument.index, instrument.value, 0)
         except:
-            station.write_register(instrument.type + instrument.index, instrument.value,  0)
+            station.write_register(instrument.index, instrument.value,  0)
         
         instrument.datetime = timezone.now()
         instrument.status = instrument.status & ~Instrument.cNT
@@ -103,16 +105,16 @@ def modbus_read(station, instrument, s):
         
             try:
                 if instrument.datatype == 0:
-                    value = station.read_register(instrument.type + instrument.index, 0)
+                    value = station.read_register(instrument.index, 0)
                     value = value * 0.01
                 if instrument.datatype == 1:
-                    value = station.read_float(instrument.type + instrument.index, 3)
+                    value = station.read_float(instrument.index, 3)
             except:
                 if instrument.datatype == 0:
-                    value = station.read_register(instrument.type + instrument.index, 0)
+                    value = station.read_register(instrument.index, 0)
                     value = value * 0.01
                 if instrument.datatype == 1:
-                    value = station.read_float(instrument.type + instrument.index, 3)
+                    value = station.read_float(instrument.index, 3)
                 
             
             if instrument.datatype == 0:
@@ -131,16 +133,48 @@ def modbus_read(station, instrument, s):
             instrument.datetime = timezone.now()
             instrument.status = instrument.status | Instrument.cNT
             instrument.save()
-               
+ 
+def scriptexec(instrument, s):
+    instrument.status = instrument.status & ~Instrument.cNT 
+    
+    i = instrument.name.find(' ')    
+    if i > -1:
+        scriptparam2 = ' "' + instrument.name[i+1:] + '"'
+        scriptname = os.path.join(s.PROJECT_PATH, 'growmat', 'scripts', instrument.name[:i])
+    else:
+        scriptparam2 = ''
+        scriptname = os.path.join(s.PROJECT_PATH, 'growmat', 'scripts', instrument.name)
+                            
+    scriptparam = ' "' + str(instrument.value) + '" "' + str(instrument.status) + '"' + scriptparam2
+    scriptname += scriptparam
+    print scriptname
+    try:
+        #chceck if exist
+        result = os.system(scriptname)
+        #print sys.exc_info()[0]
+        if not instrument.manual:
+            instrument.value = float(result) / 100
+            instrument.status = instrument.status & ~Instrument.cIV           
+        #print scriptname + ' end'
+        #os.spawnl(os.P_DETACH, scriptname)
+    except Exception as err:
+        instrument.status = instrument.status | Instrument.cIV         
+        print 'error'
+        print err
+        print sys.exc_info()[0]
+    
+    instrument.datetime = timezone.now()
+    instrument.save() 
 
 class Command(BaseCommand):
 
     help = 'GROWMAT modbus'
+    PROJECT_PATH = os.path.dirname(settings.BASE_DIR)
 
     def handle(self, *args, **options):
         print help
                 
-        PROJECT_PATH = os.path.dirname(settings.BASE_DIR)
+        
         
         #path = os.path.join(PROJECT_PATH,'growmat','ramdisk', 'raspistill.jpg')
         #os.system('raspistill -v -w 640 -h 480 -vf -s -n -t 0 -o ' + path + ' &') #-tl 60000
@@ -153,11 +187,11 @@ class Command(BaseCommand):
 
         Config = ConfigParser.ConfigParser()
         try:
-            Config.read(os.path.join(PROJECT_PATH, 'growmat.ini'))
+            Config.read(os.path.join(self.PROJECT_PATH, 'growmat.ini'))
             port = Config.get('modbus', 'port')
             debug = Config.get('modbus', 'debug')
         except:
-            cfgfile = open(os.path.join(PROJECT_PATH, 'growmat.ini'),'w+')
+            cfgfile = open(os.path.join(self.PROJECT_PATH, 'growmat.ini'),'w+')
             Config.add_section('modbus')
             Config.set('modbus','port','/dev/ttyUSB0')
             #Config.set('modbus','port','/dev/ttyAMA0')
@@ -185,26 +219,31 @@ class Command(BaseCommand):
             time_now = int(strftime('%H%M%S', gmtime()))
             
             #INPUTS
-            print 'inputs'
+            print '> inputs'
             instruments = Instrument.objects.order_by('pk')
             for instrument in instruments:
                 instrument = Instrument.objects.get(pk=instrument.pk)
                 
                 if instrument.manual == False and instrument.output == False:
-                    if instrument.address > 0:
+                    if instrument.address > 0 and instrument.type == 0: #instrument.INSTRUMENT_TYPE.MODBUS
                         if debug == 'True':
                             print 'read station {} index {}'.format(instrument.address, instrument.index)
-                        modbus_read(station, instrument,self)
-                    if instrument.address == 0:
+                        modbus_read(station, instrument, self)
+                    
+                    if instrument.address == 0 and instrument.type == 10: #instrument.INSTRUMENT_TYPE.SYSTEM:
                         if instrument.index == 0:
                             instrument.value = int(strftime("%H%M%S", gmtime()))#gmtime()))
                             instrument.save()
+                        #print instrument.INSTRUMENT_TYPE    
+                    
+                    if instrument.type == 20: #instrument.INSTRUMENT_TYPE.SCRIPT:
+                        scriptexec(instrument, self)
             
             #RULES
-            print 'rules'
+            print '> rules'
             rules = Rule.objects.order_by('priority')
             for rule in rules:
-                print rule.description
+                #print rule.description
                 
                 time_from =  int(rule.period.time_from.strftime('%H%M%S'))
                 time_to =  int(rule.period.time_to.strftime('%H%M%S'))
@@ -304,15 +343,18 @@ class Command(BaseCommand):
 
                             
             #OUTPUTS
-            print 'outputs'
+            print '> outputs'
             instruments = Instrument.objects.filter(output=True).order_by('pk')    
             for instrument in instruments:
                 instrument = Instrument.objects.get(pk=instrument.pk)
                 
                 if instrument.output == True:
-                    if instrument.address > 0:
+                    if instrument.address > 0 and instrument.type == 0: #instrument.INSTRUMENT_TYPE.MODBUS:
                         if debug=='True':
                             print 'write station {} index {} value {}'.format(instrument.address, instrument.index, instrument.value)
-                        modbus_write(station, instrument, self)    	
+                        modbus_write(station, instrument, self)  
+
+                    if instrument.type == 20: #instrument.INSTRUMENT_TYPE.SCRIPT:
+                        scriptexec(instrument, self)                        
             
             time.sleep(0.5)

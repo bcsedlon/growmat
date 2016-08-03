@@ -3,16 +3,18 @@
 
 #include "DHT.h"
 
+#define LIGHTPIN0 A2
 #define LIGHTPIN1 A3
-#define LIGHTPIN2 A4
-#define LIGHTPIN3 A5
 
-#define DHTPIN1 3
-#define DHTPIN2 4
-#define DHTPIN3 5
 
-#define DHTTYPE1 DHT22
-#define DHTTYPE2 DHT22
+#define DHTPIN0 3
+#define DHTPIN1 4
+#define DHTPIN2 5
+#define DHTPIN3 6
+
+#define DHTTYPE0 DHT11
+#define DHTTYPE1 DHT11
+#define DHTTYPE2 DHT11
 #define DHTTYPE3 DHT11
 
 // Uncomment whatever type you're using!
@@ -33,7 +35,7 @@
 // as the current DHT reading algorithm adjusts itself to work on faster procs.
 
 
-
+DHT dht0(DHTPIN0, DHTTYPE0);
 DHT dht1(DHTPIN1, DHTTYPE1);
 DHT dht2(DHTPIN2, DHTTYPE2);
 DHT dht3(DHTPIN3, DHTTYPE3);
@@ -87,22 +89,25 @@ enum
   // just add or remove registers and your good to go...
   // The first register starts at address 0
   DATA0,
-       
   DATA1,
+         
   DATA2,
-  DATA3,
-  DATA4,
   
+  DATA3,
+  
+  DATA4,
   DATA5,
   DATA6,
   DATA7,
-  DATA8,
   
+  DATA8,
   DATA9,
   DATA10,
   DATA11,
+
   DATA12,
-   
+  DATA13,
+
   HOLDING_REGS_SIZE // leave this one
   // total number of registers for function 3 and 16 share the same register array
   // i.e. the same address space
@@ -144,7 +149,8 @@ void setup()
   
   pinMode(LED, OUTPUT);
   digitalWrite(LED, LOW);
-  
+
+  dht0.begin();
   dht1.begin();
   dht2.begin();
   dht3.begin();
@@ -191,48 +197,49 @@ void loop()
 
   float t0, h0;
   
+  
   //1
-  float t1, h1, hic1, light1;
+  float t1, h1, hic1, light0;
   t1 = 32768;
   h1 = 32768;
-  h0 = dht1.readHumidity();
-  t0 = dht1.readTemperature();
+  //h0 = dht1.readHumidity();
+  //t0 = dht1.readTemperature();
   if(!isnan(t0)) {
     t1 = t0;
   }
   if(!isnan(h0)) {
     h1 = h0;
   }
-  hic1 = dht1.computeHeatIndex(t1, h1, false);
-  light1 = analogRead(LIGHTPIN1);
+  //hic1 = dht1.computeHeatIndex(t1, h1, false);
+  light0 = analogRead(LIGHTPIN0);
   //if(light1 > 15) {
   //  light1 = 32768; 
   //}
   
-  holdingRegs[DATA1]= light1;
+  holdingRegs[DATA1]= light0;
   holdingRegs[DATA2] = (t1 * 100);
   holdingRegs[DATA3] = int(h1 * 100);
   holdingRegs[DATA4] = int(hic1 * 100);
 
   //2
-  float t2, h2, hic2, light2;
+  float t2, h2, hic2, light1;
   t2 = 32768;
   h2 = 32768;
-  h0 = dht2.readHumidity();
-  t0 = dht2.readTemperature();
+  //h0 = dht2.readHumidity();
+  //t0 = dht2.readTemperature();
   if(!isnan(t0)) {
     t2 = t0;
   }
   if(!isnan(h0)) {
     h2 = h0;
   }
-  hic2 = dht2.computeHeatIndex(t2, h2, false);
-  light2 = analogRead(LIGHTPIN2);
-  if(light2 > 15) {
-    light2 = 32768; 
+  //hic2 = dht2.computeHeatIndex(t2, h2, false);
+ //light1 = analogRead(LIGHTPIN1);
+  if(light1 > 15) {
+    light1= 32768; 
   }
   
-  holdingRegs[DATA5]= light2;
+  holdingRegs[DATA5]= light1;
   holdingRegs[DATA6] = (t2 * 100);
   holdingRegs[DATA7] = int(h2 * 100);
   holdingRegs[DATA8] = int(hic2 * 100);
@@ -251,12 +258,9 @@ void loop()
     h3 = h0;
   }
   hic3 = dht3.computeHeatIndex(t3, h3, false);
-  light3 = analogRead(LIGHTPIN3);
-  if(light3 > 15) {
-    light3 = 32768; 
-  }
+
   
-  holdingRegs[DATA9]= light3;
+
   holdingRegs[DATA10] = (t3 * 100);
   holdingRegs[DATA11] = int(h3 * 100);
   holdingRegs[DATA12] = int(hic3 * 100);

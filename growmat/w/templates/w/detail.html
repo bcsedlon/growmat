@@ -87,14 +87,18 @@
 			</h3>&nbsp;
   
   <table>
-
+			{% if user.is_authenticated %}
 			<tr><td><button class="label" type="submit" name="setValue">SET</button></td>
     		<td><button class="label" type="submit" name="setOff">OFF</button></td>
     	    <td><button class="label" type="submit" name="setOn">ON</button></td>
         	<td><button class="label" type="submit" name="resetManual"
-        	{% if not instrument.manual %}
+        		{% if not instrument.manual %}
 					disabled
 				{% endif %}>AUTO</button></td></tr>
+			 {% endif %}
+			 {% if not user.is_authenticated %}
+				<h1><a href="{% url 'w:login' %}">Please login to edit data.</a></h1>
+			{% endif %}
   			</table>
 		</form>
 	</body>

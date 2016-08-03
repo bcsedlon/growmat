@@ -1,0 +1,2 @@
+condensator distance
+dip switch distance
