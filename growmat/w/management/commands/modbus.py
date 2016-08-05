@@ -297,7 +297,7 @@ class Command(BaseCommand):
                             if rule.output.index==0:
                                 #cl.send(xmpp.Message( rule.output.name ,rule.description ))
                                 #execfile('python xsend.py "{}" "{}"'.format(rule.output.name ,rule.description))
-                                scriptname = os.path.join(PROJECT_PATH, 'xsend.py')
+                                scriptname = os.path.join(self.PROJECT_PATH, 'xsend.py')
                                 #call(['python', '/home/pi/growmat/xsend.py' ,'{}'.format(rule.output.name), '{}'.format(rule.description)])
                                 call(['python', scriptname ,'{}'.format(rule.output.name), '{}'.format(rule.description)])
                                 #print "Jabber: send"
@@ -306,10 +306,10 @@ class Command(BaseCommand):
                                 i = rule.description.find(' ')
                                 if i > -1:
                                     scriptparam = ' ' + str(rule.result) + rule.description[i:]
-                                    scriptname = os.path.join(PROJECT_PATH, 'growmat', 'scripts', rule.description[:i])
+                                    scriptname = os.path.join(self.PROJECT_PATH, 'growmat', 'scripts', rule.description[:i])
                                 else:
                                     scriptparam = ' ' + str(rule.result)
-                                    scriptname = os.path.join(PROJECT_PATH, 'growmat', 'scripts', rule.description)
+                                    scriptname = os.path.join(self.PROJECT_PATH, 'growmat', 'scripts', rule.description)
                                                             
                                     scriptname = scriptname + scriptparam + ' &'
                                     #print scriptname + ' start'
@@ -328,7 +328,7 @@ class Command(BaseCommand):
                         rule.save()
                     
                         #fn =  '/home/pi/growmat/growmat/ramdisk/0.csv'
-                        fn = os.path.join(PROJECT_PATH, 'growmat', 'ramdisk', '0.csv')
+                        fn = os.path.join(self.PROJECT_PATH, 'growmat', 'ramdisk', '0.csv')
                         f = open(fn, 'a+')
                         f.write(str(rule.id))
                         f.write(';')
