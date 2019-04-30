@@ -1,3 +1,5 @@
+#from django.urls import reverse
+
 from django.db import models
 from django.forms import ModelForm
 from django.views.generic import ListView
@@ -18,8 +20,9 @@ class Instrument(models.Model):
 	
 	INSTRUMENT_TYPE = (
 					(10, 'SYSTEM'),
-					(0, 'MODBUS'),
+					(0,  'MODBUS'),
      				(20, 'SCRIPT'),
+                    (30, 'GROWMATDROID'),
          			#(30, 'HUMIDITYMETER'),
     			    #(40, 'DISTANCEMETER'),
     				#(50, 'PHMETER'),    				

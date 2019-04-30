@@ -129,7 +129,16 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'archives', '7'),
     os.path.join(BASE_DIR, 'archives', '8'),
     os.path.join(BASE_DIR, 'archives', '9'),
-   
+    os.path.join(BASE_DIR, 'archives', '10'),   
+    os.path.join(BASE_DIR, 'archives', '11'),   
+    os.path.join(BASE_DIR, 'archives', '12'),   
+    os.path.join(BASE_DIR, 'archives', '13'),   
+    os.path.join(BASE_DIR, 'archives', '14'),   
+    os.path.join(BASE_DIR, 'archives', '15'),   
+    os.path.join(BASE_DIR, 'archives', '16'),   
+    os.path.join(BASE_DIR, 'archives', '17'),   
+    os.path.join(BASE_DIR, 'archives', '18'),   
+    os.path.join(BASE_DIR, 'archives', '19'),   
 ]
 
 DBBACKUP_BACKUP_DIRECTORY = '/home/pi/growmat/'

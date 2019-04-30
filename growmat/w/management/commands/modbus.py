@@ -16,7 +16,13 @@ from subprocess import call
 
 import ConfigParser
 
-import minimalmodbus
+try:
+    import minimalmodbus
+    MODBUS = True
+except:
+    print 'MODBUS disabled!'
+    MODBUS = False
+    
 
 
 #print Archive.objects.raw('DELETE FROM w_archive WHERE 1')
@@ -79,25 +85,144 @@ def get_external_ip():
 
 #call(['python', '/home/pi/growmat/xsend.py' ,'growmat@jabbim.cz', 'GROWMAT'])
 
-
-
-def modbus_write(station, instrument, s):
+def growmatdroid_write(instrument, s):
     try:
-        station.address = instrument.address
-        try:
-            station.write_register(instrument.index, instrument.value, 0)
-        except:
-            station.write_register(instrument.index, instrument.value,  0)
+        timeout = 0
+        fnTx = os.path.join('..' , 'btspp2file', str(instrument.address), 'tx.txt')
+        
+        #while os.path.exists('../btspp2file/tx.txt'):
+        while os.path.exists(fnTx):
+            time.sleep(0.1)
+            timeout = timeout + 1
+            if timeout > 40:
+               raise Exception('Growmatdroid IO timeout.')
+
+        #with open('../btspp2file/tx.txt', 'a') as outfile:
+        with open(fnTx, 'a') as outfile:
+            if instrument.datatype == 0:
+                #integer digital
+                #outfile.write('d' + str(instrument.index) + ',' + str(int(instrument.value)) + ';\n')
+				outfile.write(str(instrument.index).zfill(4)  + ':' + str(int(instrument.value)) + '\n')
+            if instrument.datatype == 1:
+                #float analog
+                #outfile.write('d' + str(instrument.index) + ',' + str(instrument.value) + ';\n')
+				outfile.write(str(instrument.index).zfill(4)  + ':' + str(instrument.value) + '\n')
         
         instrument.datetime = timezone.now()
         instrument.status = instrument.status & ~Instrument.cNT
-        instrument.save()   
-    except:
+        instrument.save() 
+        
+    except Exception as e: 
+        print(e)
         instrument.datetime = timezone.now()
         instrument.status = instrument.status | Instrument.cNT
-        instrument.save()    
+        instrument.save() 
+    
+    #open(oldfile, 'r', encoding='utf-8') as infile:
+    #    for line in infile:
+    #        if line.startswith(txt):
+    #            line = line[0:len(txt)] + ' - Truly a great person!\n'
+    #        outfile.write(line)
+
+def growmatdroid_read(instrument, s):
+    try:
+        timeout = 0
+        fnRx = os.path.join('..' , 'btspp2file', str(instrument.address), 'rx.txt')
+        
+        '''
+        fnTx = os.path.join('../btspp2file/', instrument.address, 'tx.txt')
+        #while os.path.exists('../btspp2file/tx.txt'):
+        while os.path.exists(fnTx):
+            time.sleep(0.1)
+            timeout = timeout + 1
+            if timeout > 40:
+               raise Exception('Growmatdroid IO timeout.')
+        
+        #with open('../btspp2file/tx.txt', 'a') as outfile:
+        with open(fnTx, 'a') as outfile:
+            outfile.write('s' + str(instrument.index) + ';')
+            print('s' + str(instrument.index) + ';')
+            if instrument.datatype == 0:
+                #integer digital
+                print ('r3;')
+                outfile.write('r3;\n')
+            if instrument.datatype == 1:
+                #float analog
+                print('e3;')
+                outfile.write('e3;\n')
+        #time.sleep(2)
+        timeout = 0
+        '''
+        
+        while not os.path.exists(fnRx):
+            time.sleep(0.1)
+            timeout = timeout + 1
+            if timeout > 40:
+               raise Exception('Growmatdroid IO timeout.')
+        
+        #with open('../btspp2file/rx.txt', 'r') as infile:
+        bNT = True
+        with open(fnRx, 'r') as infile:
+            for line in infile:
+                print line
+                if line != "":
+                    #values = line.split(',')
+                    #print values[1]
+                    #value = float(values[instrument.datatype])
+                    values = line.split(':')
+                    index = int(values[0])
+                    if index == instrument.index:
+                        bNT = False
+                        if instrument.datatype == 0:
+                            #integer digital
+                            instrument.value = int(values[1])
+                        if instrument.datatype == 1:
+                            #float analog
+                            instrument.value = float(values[1])
+        
+        #instrument.value = value
+        instrument.datetime = timezone.now()
+        if bNT:
+            instrument.status = instrument.status | Instrument.cNT
+        else:
+            instrument.status = instrument.status & ~Instrument.cNT
+        instrument.save()       
+        
+    except Exception as e: 
+        print(e)
+        instrument.datetime = timezone.now()
+        instrument.status = instrument.status | Instrument.cNT
+        instrument.save() 
+    try:    
+        #os.remove('../btspp2file/rx.txt')
+        os.remove(fnRx)
+    except Exception as e: 
+        #print(e)
+        pass
+        
+def modbus_write(station, instrument, s):
+    if station:
+        try:
+            station.address = instrument.address
+            try:
+                station.write_register(instrument.index, instrument.value, 0)
+            except:
+                station.write_register(instrument.index, instrument.value,  0)
+            
+            instrument.datetime = timezone.now()
+            instrument.status = instrument.status & ~Instrument.cNT
+            instrument.save()   
+        except:
+            instrument.datetime = timezone.now()
+            instrument.status = instrument.status | Instrument.cNT
+            instrument.save()    
+    #else:
+    #    instrument.datetime = timezone.now()
+    #    instrument.status = instrument.status | Instrument.cNT
+     #   instrument.save()         
 
 def modbus_read(station, instrument, s):
+    if station:
         try:
             instrument.status = instrument.status & ~Instrument.cNT
             
@@ -133,6 +258,10 @@ def modbus_read(station, instrument, s):
             instrument.datetime = timezone.now()
             instrument.status = instrument.status | Instrument.cNT
             instrument.save()
+    #else:
+    #    instrument.datetime = timezone.now()
+    #    instrument.status = instrument.status | Instrument.cNT
+    #    instrument.save()    
  
 def scriptexec(instrument, s):
     instrument.status = instrument.status & ~Instrument.cNT 
@@ -203,17 +332,20 @@ class Command(BaseCommand):
             print 'Please check growmat.ini and try again!'
             return
         
-        station = minimalmodbus.Instrument(port, 1)
-
-        print station.serial.port          
-        if debug == 'True':
-            station.debug = True
+        if MODBUS:
+            station = minimalmodbus.Instrument(port, 1)
+            station.serial.baudrate = 9600   # Baud
+            station.serial.bytesize = 8
+            #station.serial.parity   = serial.PARITY_NONE
+            station.serial.stopbits = 2
+            station.serial.timeout  = 0.1
+            print station.serial.port          
+            if debug == 'True':
+                station.debug = True
+        else:
+            station = None
         
-        station.serial.baudrate = 9600   # Baud
-        station.serial.bytesize = 8
-        #station.serial.parity   = serial.PARITY_NONE
-        station.serial.stopbits = 2
-        station.serial.timeout  = 0.1
+
                 
         while 1:
             time_now = int(strftime('%H%M%S', gmtime()))
@@ -238,6 +370,11 @@ class Command(BaseCommand):
                     
                     if instrument.type == 20: #instrument.INSTRUMENT_TYPE.SCRIPT:
                         scriptexec(instrument, self)
+                        
+                    if instrument.type == 30: #instrument.INSTRUMENT_TYPE.GROWMATDROID
+                        if debug == 'True':
+                            print 'read growmatdroid address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
+                        growmatdroid_read(instrument, self)
             
             #RULES
             print '> rules'
@@ -355,6 +492,11 @@ class Command(BaseCommand):
                         modbus_write(station, instrument, self)  
 
                     if instrument.type == 20: #instrument.INSTRUMENT_TYPE.SCRIPT:
-                        scriptexec(instrument, self)                        
+                        scriptexec(instrument, self) 
+
+                    if instrument.type == 30: #instrument.INSTRUMENT_TYPE.GROWMATDROID
+                        if debug == 'True':
+                            print 'write growmatdroid address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
+                        growmatdroid_write(instrument, self)                        
             
             time.sleep(0.5)
