@@ -22,9 +22,14 @@ try:
 except:
     print 'MODBUS disabled!'
     MODBUS = False
+
+try:   
+    from rpi_rf import RFDevice
+    RC = True
+except:
+    print 'RC disabled!'
+    RC = False
     
-
-
 #print Archive.objects.raw('DELETE FROM w_archive WHERE 1')
 
 #from django.db import connection
@@ -85,7 +90,17 @@ def get_external_ip():
 
 #call(['python', '/home/pi/growmat/xsend.py' ,'growmat@jabbim.cz', 'GROWMAT'])
 
-def growmatdroid_write(instrument, s):
+def rc_write(instrument, s):
+    try:
+        rfdevice.tx_code(instrument.index + instrument.value, None, None, None)
+    
+    except Exception as e: 
+        print(e)
+        instrument.datetime = timezone.now()
+        instrument.status = instrument.status | Instrument.cNT
+        instrument.save() 
+
+def btspp2file_write(instrument, s):
     try:
         timeout = 0
         fnTx = os.path.join('..' , 'btspp2file', str(instrument.address), 'tx.txt')
@@ -95,7 +110,7 @@ def growmatdroid_write(instrument, s):
             time.sleep(0.1)
             timeout = timeout + 1
             if timeout > 40:
-               raise Exception('Growmatdroid IO timeout.')
+               raise Exception('BTSPP2FILE IO timeout.')
 
         #with open('../btspp2file/tx.txt', 'a') as outfile:
         with open(fnTx, 'a') as outfile:
@@ -124,7 +139,7 @@ def growmatdroid_write(instrument, s):
     #            line = line[0:len(txt)] + ' - Truly a great person!\n'
     #        outfile.write(line)
 
-def growmatdroid_read(instrument, s):
+def btspp2file_read(instrument, s):
     try:
         timeout = 0
         fnRx = os.path.join('..' , 'btspp2file', str(instrument.address), 'rx.txt')
@@ -136,7 +151,7 @@ def growmatdroid_read(instrument, s):
             time.sleep(0.1)
             timeout = timeout + 1
             if timeout > 40:
-               raise Exception('Growmatdroid IO timeout.')
+               raise Exception('BTSPP2FILE IO timeout.')
         
         #with open('../btspp2file/tx.txt', 'a') as outfile:
         with open(fnTx, 'a') as outfile:
@@ -158,7 +173,7 @@ def growmatdroid_read(instrument, s):
             time.sleep(0.1)
             timeout = timeout + 1
             if timeout > 40:
-               raise Exception('Growmatdroid IO timeout.')
+               raise Exception('BTSPP2FILE IO timeout.')
         
         #with open('../btspp2file/rx.txt', 'r') as infile:
         bNT = True
@@ -319,6 +334,9 @@ class Command(BaseCommand):
             Config.read(os.path.join(self.PROJECT_PATH, 'growmat.ini'))
             port = Config.get('modbus', 'port')
             debug = Config.get('modbus', 'debug')
+            
+            rctxpin = Config.get('rc', 'txpin')
+            
         except:
             cfgfile = open(os.path.join(self.PROJECT_PATH, 'growmat.ini'),'w+')
             Config.add_section('modbus')
@@ -326,6 +344,9 @@ class Command(BaseCommand):
             #Config.set('modbus','port','/dev/ttyAMA0')
             #Config.set('modbus','port','COM1')
             Config.set('modbus','debug','False')
+            
+            Config.add_section('rc')
+            Config.set('rc','txpin', 18)
             
             Config.write(cfgfile)
             cfgfile.close()
@@ -345,7 +366,10 @@ class Command(BaseCommand):
         else:
             station = None
         
-
+        if RC:
+            rfdevice = RFDevice(rctxpin)
+            rfdevice.enable_tx()
+            rfdevice.tx_repeat = 10
                 
         while 1:
             time_now = int(strftime('%H%M%S', gmtime()))
@@ -373,8 +397,8 @@ class Command(BaseCommand):
                         
                     if instrument.type == 30: #instrument.INSTRUMENT_TYPE.GROWMATDROID
                         if debug == 'True':
-                            print 'read growmatdroid address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
-                        growmatdroid_read(instrument, self)
+                            print 'read btspp2file address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
+                        btspp2file_read(instrument, self)
             
             #RULES
             print '> rules'
@@ -496,7 +520,7 @@ class Command(BaseCommand):
 
                     if instrument.type == 30: #instrument.INSTRUMENT_TYPE.GROWMATDROID
                         if debug == 'True':
-                            print 'write growmatdroid address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
-                        growmatdroid_write(instrument, self)                        
+                            print 'write btspp2file address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
+                        btspp2file_write(instrument, self)                        
             
             time.sleep(0.5)
