@@ -24,6 +24,7 @@ class Instrument(models.Model):
      				(20, 'SCRIPT'),
                     (30, 'BTSPP2FILE'),
                     (40, 'RC'),
+                    (50, 'GROWMATUTILS'),
          			#(30, 'HUMIDITYMETER'),
     			    #(40, 'DISTANCEMETER'),
     				#(50, 'PHMETER'),    				

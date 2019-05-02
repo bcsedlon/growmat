@@ -4,6 +4,6 @@ echo "growmat runserver"
 
 #nohup python ./growmat/growmat/manage.py modbus &
 #nohup python ./growmat/growmat/manage.py archive &
-python ./growmat/manage.py runserver 0.0.0.0:80
+python ./growmat/manage.py runserver 0.0.0.0:8000
 
 #nohup fswebcam -c /etc/fswebcam.conf &

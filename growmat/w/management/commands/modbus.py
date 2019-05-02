@@ -1,3 +1,4 @@
+import growmatutils
 
 from django.core.management.base import BaseCommand
 #from django.core.management.base import CommandError
@@ -90,9 +91,22 @@ def get_external_ip():
 
 #call(['python', '/home/pi/growmat/xsend.py' ,'growmat@jabbim.cz', 'GROWMAT'])
 
-def rc_write(instrument, s):
+def rc_write(rfdevice, instrument, s):
     try:
-        rfdevice.tx_code(instrument.index + instrument.value, None, None, None)
+        code = int(instrument.index + instrument.value)
+        rfdevice.tx_code(code, 1, 350, 24)
+        print code
+        
+        code = str(int(instrument.index + instrument.value))
+        scriptname = os.path.join(s.PROJECT_PATH, 'growmat', 'scripts', 'rpi-rf_send')
+        scriptparam = ' -g 18 ' + code
+        scriptname += scriptparam
+        print scriptname
+        try:
+            #chceck if exist
+            result = os.system(scriptname)
+        except Exception as e: 
+            print(e)
     
     except Exception as e: 
         print(e)
@@ -279,6 +293,11 @@ def modbus_read(station, instrument, s):
     #    instrument.save()    
  
 def scriptexec(instrument, s):
+    if instrument.name == 'ultrasonic':
+        instrument.value = ultrasonic.distance()
+        instrument.save()
+        return
+
     instrument.status = instrument.status & ~Instrument.cNT 
     
     i = instrument.name.find(' ')    
@@ -367,7 +386,7 @@ class Command(BaseCommand):
             station = None
         
         if RC:
-            rfdevice = RFDevice(rctxpin)
+            rfdevice = RFDevice(int(rctxpin))
             rfdevice.enable_tx()
             rfdevice.tx_repeat = 10
                 
@@ -390,15 +409,23 @@ class Command(BaseCommand):
                         if instrument.index == 0:
                             instrument.value = int(strftime("%H%M%S", gmtime()))#gmtime()))
                             instrument.save()
-                        #print instrument.INSTRUMENT_TYPE    
+                        #print instrument.INSTRUMENT_TYPE                   
                     
                     if instrument.type == 20: #instrument.INSTRUMENT_TYPE.SCRIPT:
                         scriptexec(instrument, self)
                         
-                    if instrument.type == 30: #instrument.INSTRUMENT_TYPE.GROWMATDROID
+                    if instrument.type == 30: #instrument.INSTRUMENT_TYPE.BTSPP2FILE
                         if debug == 'True':
                             print 'read btspp2file address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
                         btspp2file_read(instrument, self)
+                        
+                    if instrument.type == 50: #instrument.INSTRUMENT_TYPE.GROWMATUTILS
+                        #if debug == 'True':
+                        #    print 'read btspp2file address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
+                        value = eval('growmatutils.' + instrument.name + '(' + str(instrument.address) + ')')
+                        instrument.value = value
+                        instrument.save()
+                        
             
             #RULES
             print '> rules'
@@ -518,9 +545,14 @@ class Command(BaseCommand):
                     if instrument.type == 20: #instrument.INSTRUMENT_TYPE.SCRIPT:
                         scriptexec(instrument, self) 
 
-                    if instrument.type == 30: #instrument.INSTRUMENT_TYPE.GROWMATDROID
+                    if instrument.type == 30: #instrument.INSTRUMENT_TYPE.BTSPP2FILE
                         if debug == 'True':
                             print 'write btspp2file address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
-                        btspp2file_write(instrument, self)                        
+                        btspp2file_write(instrument, self)
+
+                    if instrument.type == 40: #instrument.INSTRUMENT_TYPE.RC
+                        if debug == 'True':
+                            print 'write rc address {} index {} type {}'.format(instrument.address, instrument.index, instrument.type)
+                        rc_write(rfdevice, instrument, self)
             
             time.sleep(0.5)
